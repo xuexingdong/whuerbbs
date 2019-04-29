@@ -15,7 +15,7 @@
           and user_id = #{userId}
           and deleted = 0
     </delete>
-    <select id="count" resultType="int">
+    <select id="count" resultType="long">
         select count(1)
         from attitude
         <where>

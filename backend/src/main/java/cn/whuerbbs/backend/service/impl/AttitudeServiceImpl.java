@@ -12,6 +12,7 @@ import cn.whuerbbs.backend.model.Attitude;
 import cn.whuerbbs.backend.model.Notification;
 import cn.whuerbbs.backend.service.AttitudeService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.interceptor.TransactionAspectSupport;
@@ -85,7 +86,13 @@ public class AttitudeServiceImpl implements AttitudeService {
         attitude.setTarget(target);
         attitude.setTargetId(targetId);
         attitude.setUserId(userId);
-        int deletedRecordCount = attitudeMapper.delete(attitude);
+        int deletedRecordCount;
+        try {
+            deletedRecordCount = attitudeMapper.delete(attitude);
+        } catch (DuplicateKeyException ex) {
+            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+            return;
+        }
         if (deletedRecordCount > 0) {
             switch (target) {
                 case POST:
