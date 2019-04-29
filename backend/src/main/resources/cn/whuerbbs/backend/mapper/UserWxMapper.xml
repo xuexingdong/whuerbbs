@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.whuerbbs.backend.mapper.UserWxMapper">
+    <insert id="insert">
+        insert into user_wx(user_id, openid, created_at)
+        values (#{userId}, #{openid}, #{createdAt})
+    </insert>
+    <select id="selectByOpenid" resultType="UserWx">
+        select *
+        from user_wx
+        where openid = #{openid}
+          and deleted = 0
+    </select>
+</mapper>

@@ -1,0 +1,17 @@
+spring:
+  application:
+    name: whuerbbs
+  profiles:
+    active: dev
+  jackson:
+    property-naming-strategy: SNAKE_CASE
+
+mybatis:
+  mapper-locations: classpath:cn/whuerbbs/backend/mapper/*Mapper.xml
+  type-aliases-package: cn.whuerbbs.backend.model
+  type-handlers-package: cn.whuerbbs.backend.mapper.typehandler
+  configuration:
+    map-underscore-to-camel-case: true
+
+server:
+  port: 8081

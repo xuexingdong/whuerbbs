@@ -1,0 +1,55 @@
+buildscript {
+    ext {
+        springBootVersion = '2.1.4.RELEASE'
+        jjwtVersion = '0.10.6'
+        commonsLang3Version = '3.8.1'
+        mybatisSpringBootVersion = '2.0.0'
+        pagehelperSpringBootVersion = '1.2.10'
+        mysqlConnectorVersion = '8.0.13'
+    }
+    repositories {
+        mavenCentral()
+    }
+    dependencies {
+        classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
+    }
+}
+
+plugins {
+    id 'java-library'
+    id 'idea'
+    id 'org.springframework.boot' version '2.1.4.RELEASE'
+    id 'io.spring.dependency-management' version '1.0.7.RELEASE'
+}
+
+repositories {
+    mavenCentral()
+}
+
+allprojects {
+    group 'cn.whuerbbs'
+    version '1.0.0-SNAPSHOT'
+
+    repositories {
+        mavenCentral()
+    }
+
+    sourceCompatibility = JavaVersion.VERSION_11
+    targetCompatibility = JavaVersion.VERSION_11
+}
+
+subprojects {
+
+    apply plugin: 'java-library'
+    apply plugin: 'idea'
+    apply plugin: 'org.springframework.boot'
+
+    dependencies {
+        api enforcedPlatform("org.springframework.boot:spring-boot-dependencies:${springBootVersion}")
+        api "org.springframework.boot:spring-boot-starter-web"
+        api "mysql:mysql-connector-java:${mysqlConnectorVersion}"
+        api "org.mybatis.spring.boot:mybatis-spring-boot-starter:${mybatisSpringBootVersion}"
+        api "org.apache.commons:commons-lang3:${commonsLang3Version}"
+        api "com.github.pagehelper:pagehelper-spring-boot-starter:${pagehelperSpringBootVersion}"
+    }
+}

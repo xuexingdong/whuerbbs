@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.whuerbbs.backend.mapper.PostMapper">
+    <resultMap id="postResult" type="Post" autoMapping="true">
+        <association property="user" javaType="User" autoMapping="true"/>
+    </resultMap>
+
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id">
+        insert into post (title, content, user_id, created_at, last_active_at
+        )
+        values (#{title}, #{content}, #{userId}, #{createdAt}, #{lastActiveAt})
+    </insert>
+    <update id="updateLastActiveTime">
+        update post
+        set last_active_at = #{lastActiveAt}
+        where id = #{id}
+          and deleted = 0
+    </update>
+    <update id="updateLikeCount">
+        update post
+        set like_count = like_count + #{likeCount}
+        where id = #{id}
+          and deleted = 0
+    </update>
+    <update id="updateCommentCount">
+        update post
+        set comment_count = comment_count + #{commentCount}
+        where id = #{id}
+          and deleted = 0
+    </update>
+    <select id="selectPageable" resultMap="postResult">
+        select p.id,
+               p.title,
+               p.content,
+               p.like_count,
+               p.comment_count,
+               p.user_id,
+               p.created_at,
+               p.last_active_at,
+               u.id,
+               u.nickname,
+               u.avatar_url,
+               u.gender
+        from post p
+                 left join user u on p.user_id = u.id
+        where p.deleted = 0
+        order by p.last_active_at desc
+    </select>
+    <select id="selectById" resultMap="postResult">
+        select p.id,
+               p.title,
+               p.content,
+               p.like_count,
+               p.comment_count,
+               p.user_id,
+               p.created_at,
+               p.last_active_at,
+               u.id,
+               u.nickname,
+               u.avatar_url,
+               u.gender
+        from (select id,
+                     title,
+                     content,
+                     like_count,
+                     comment_count,
+                     created_at,
+                     user_id,
+                     last_active_at
+              from post
+              where id = #{id}
+                and deleted = 0) p
+                 left join user u on p.user_id = u.id
+    </select>
+</mapper>

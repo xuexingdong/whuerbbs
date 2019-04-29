@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.whuerbbs.backend.mapper.CommentMapper">
+    <resultMap id="commentResult" type="Comment" autoMapping="true">
+        <association property="user" javaType="User" autoMapping="true"/>
+    </resultMap>
+
+    <insert id="insert" keyProperty="id" useGeneratedKeys="true">
+        insert into comment (content, post_id, user_id, created_at)
+        values (#{content}, #{postId}, #{userId}, #{createdAt})
+    </insert>
+    <update id="updateLikeCount">
+        update comment
+        set like_count = like_count + #{likeCount}
+        where id = #{id}
+          and deleted = 0
+    </update>
+    <select id="selectByPostIdPageable" resultMap="commentResult">
+        select c.id,
+               c.content,
+               c.like_count,
+               c.post_id,
+               c.user_id,
+               c.created_at,
+               u.id,
+               u.nickname,
+               u.avatar_url,
+               u.gender
+        from comment c
+                 join user u on c.user_id = u.id
+        where c.post_id = #{postId}
+          and c.deleted = 0
+        order by c.created_at desc
+    </select>
+    <select id="countByPostId" resultType="long">
+        select count(1)
+        from comment
+        where post_id = #{postId}
+          and deleted = 0
+    </select>
+    <select id="selectById" resultType="Comment">
+        select c.id,
+               c.content,
+               c.like_count,
+               c.post_id,
+               c.created_at,
+               c.user_id
+        from comment c
+        where c.id = #{id}
+          and c.deleted = 0
+    </select>
+</mapper>
