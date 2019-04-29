@@ -52,7 +52,7 @@ public class NotificationServiceImpl implements NotificationService {
             case POST_LIKED:
                 var postOptional = postMapper.selectById(Integer.parseInt(notification.getReferenceId()));
                 if (postOptional.isPresent()) {
-                    summary = postOptional.get().getContent().substring(0, Math.min(Constants.NOTIFICATION_SUMMARY_LENGTH, postOptional.get().getTitle().length()));
+                    summary = postOptional.get().getTitle().substring(0, Math.min(Constants.NOTIFICATION_SUMMARY_LENGTH, postOptional.get().getTitle().length()));
                 }
                 break;
             case COMMENT_LIKED:
