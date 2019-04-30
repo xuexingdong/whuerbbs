@@ -1,0 +1,396 @@
+openapi: 3.0.0
+
+info:
+  title: 武大论坛接口文档
+  version: 1.0.0
+
+servers:
+  - url: whuerbbs.cn/v1
+
+paths:
+  /upload:
+    post:
+      summary: 文件上传
+      requestBody:
+        content:
+          image/png:
+            schema:
+              type: string
+              format: binary
+      responses:
+        200:
+          description: ok
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: string
+                  path:
+                    type: string
+  /comments:
+    get:
+      summary: 分页获取评论
+      parameters:
+        - in: query
+          name: post_id
+          required: true
+          schema:
+            type: integer
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: integer
+                  content:
+                    type: string
+                  like_count:
+                    type: integer
+                  created_at:
+                    type: string
+                  created_by:
+                    $ref: '#/components/schemas/UserVO'
+                  attitude_status:
+                    $ref: '#/components/schemas/AttitudeStatus'
+    post:
+      summary: 提交评论
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                post_id:
+                  type: string
+                content:
+                  type: string
+                  maxLength: 300
+      responses:
+        200:
+          $ref: '#/components/responses/Ok'
+
+  /comments/{commentId}/like:
+    post:
+      summary: 点赞评论
+      parameters:
+        - in: path
+          name: commentId
+          required: true
+          schema:
+            type: integer
+      responses:
+        200:
+          description: 点赞成功
+          $ref: '#/components/responses/Ok'
+
+  /comments/{commentId}/cancel_like:
+    post:
+      summary: 取消评论点赞
+      parameters:
+        - in: path
+          name: commentId
+          required: true
+          schema:
+            type: integer
+      responses:
+        200:
+          description: 取消点赞成功
+          $ref: '#/components/responses/Ok'
+  /wxlogin:
+    post:
+      summary: 微信登录
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                code:
+                  type: string
+                nickname:
+                  type: string
+                avatar_url:
+                  type: string
+                gender:
+                  $ref: '#/components/schemas/Gender'
+                country:
+                  type: string
+                province:
+                  type: string
+                city:
+                  type: string
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  token:
+                    type: string
+                  expiration:
+                    type: integer
+  /logout:
+    post:
+      summary: 退出登录
+      responses:
+        200:
+          description: ok
+          $ref: '#/components/responses/Ok'
+
+  /notifications:
+    get:
+      summary: 获取通知列表
+      responses:
+        200:
+          description: ok
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: integer
+                  type:
+                    $ref: '#/components/schemas/NotificationType'
+                  reference_id:
+                    type: string
+                  content:
+                    type: string
+                  summary:
+                    type: string
+                  from_user:
+                    $ref: '#/components/schemas/UserVO'
+  /posts:
+    post:
+      summary: 发表帖子
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                title:
+                  type: string
+                content:
+                  type: string
+                images:
+                  type: array
+                  items:
+                    type: string
+      responses:
+        200:
+          description: ok
+          $ref: '#/components/responses/Ok'
+  /allposts:
+    get:
+      summary: 获取全部帖子
+      responses:
+        200:
+          description: ok
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: integer
+                  title:
+                    type: string
+                  summary:
+                    type: string
+                  image:
+                    type: string
+                  like_count:
+                    type: integer
+                  comment_count:
+                    type: integer
+                  last_active_at:
+                    type: integer
+  /posts/{postId}:
+    get:
+      summary: 获取帖子详情
+      parameters:
+        - in: path
+          name: postId
+          required: true
+          schema:
+            type: integer
+      responses:
+        200:
+          description: ok
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: integer
+                  title:
+                    type: string
+                  summary:
+                    type: string
+                  images:
+                    type: array
+                    items:
+                      type: string
+                  like_count:
+                    type: integer
+                  comment_count:
+                    type: integer
+                  last_active_at:
+                    type: integer
+                  attitude_status:
+                    $ref: '#/components/schemas/AttitudeStatus'
+  /posts/{postId}/like:
+    post:
+      summary: 点赞帖子
+      parameters:
+        - in: path
+          name: postId
+          required: true
+          schema:
+            type: integer
+      responses:
+        200:
+          description: ok
+          $ref: '#/components/responses/Ok'
+
+  /posts/{postId}/cancel_like:
+    post:
+      summary: 取消帖子点赞
+      parameters:
+        - in: path
+          name: postId
+          required: true
+          schema:
+            type: integer
+      responses:
+        200:
+          description: ok
+          $ref: '#/components/responses/Ok'
+
+  /user:
+    get:
+      summary: 查看个人信息
+      parameters:
+        - in: path
+          name: postId
+          required: true
+          schema:
+            type: integer
+      responses:
+        200:
+          description: ok
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/UserVO'
+                    properties:
+                      notification_count:
+                        type: integer
+
+  /users/{userId}:
+    get:
+      summary: 查看他人信息
+      parameters:
+        - in: path
+          name: userId
+          required: true
+          schema:
+            type: integer
+      responses:
+        200:
+          description: ok
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserVO'
+
+
+components:
+  responses:
+    Ok:
+      description: 成功
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              code:
+                type: integer
+              message:
+                type: integer
+    BadRequest:
+      description: 表单错误
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    Unauthorized:
+      description: 未登录
+    Forbidden:
+      description: 权限不足
+    NotFound:
+      description: 资源不存在
+    InternalServerError:
+      description: 服务器内部错误
+
+  schemas:
+    AttitudeStatus:
+      type: integer
+      enum: [0, 1]
+      description: >
+        Sort order:
+         * `0` - 默认
+         * `1` - 点赞
+    AttitudeTarget:
+      type: integer
+      enum: [1, 2]
+      description: >
+        Sort order:
+         * `1` - 评论
+         * `2` - 帖子
+    Gender:
+      type: integer
+      enum: [0, 1, 2]
+      description: >
+        Sort order:
+         * `0` - 未知
+         * `1` - 男
+         * `2` - 女
+    NotificationType:
+      type: integer
+      enum: [1, 2, 3]
+      description: >
+        Sort order:
+         * `1` - 帖子被评论
+         * `2` - 帖子被点赞
+         * `3` - 评论被点赞
+    UserVO:
+      type: object
+      properties:
+        id:
+          type: string
+        nickname:
+          type: string
+        avatar_url:
+          type: string
+        gender:
+          type: string
+    Error:
+      type: object
+      properties:
+        message:
+          type: string
+      required:
+        - message
