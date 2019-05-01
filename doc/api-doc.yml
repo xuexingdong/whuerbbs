@@ -86,7 +86,6 @@ paths:
             type: integer
       responses:
         200:
-          description: 点赞成功
           $ref: '#/components/responses/Ok'
 
   /comments/{commentId}/cancel_like:
@@ -100,7 +99,6 @@ paths:
             type: integer
       responses:
         200:
-          description: 取消点赞成功
           $ref: '#/components/responses/Ok'
   /wxlogin:
     post:
@@ -143,7 +141,6 @@ paths:
       summary: 退出登录
       responses:
         200:
-          description: ok
           $ref: '#/components/responses/Ok'
 
   /notifications:
@@ -170,8 +167,38 @@ paths:
                   from_user:
                     $ref: '#/components/schemas/UserVO'
   /posts:
+    get:
+      summary: 获取全部帖子（问点事、一起玩共用）
+      parameters:
+        - in: query
+          name: board
+          required: true
+          description: 版块
+          schema:
+            type: integer
+        - in: query
+          name: topic_id
+          description: 话题id
+          schema:
+            type: integer
+      responses:
+        200:
+          description: ok
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/PostListVO'
+                  - type: object
+                    properties:
+                      board:
+                        $ref: '#/components/schemas/Board'
+                      topic_id:
+                        type: integer
+                      topic_name:
+                        type: string
     post:
-      summary: 发表帖子
+      summary: 发布帖子
       requestBody:
         content:
           application/json:
@@ -186,35 +213,24 @@ paths:
                   type: array
                   items:
                     type: string
+                    maxItems: 9
+                topic_id:
+                  type: integer
+                board:
+                  type: integer
       responses:
         200:
-          description: ok
           $ref: '#/components/responses/Ok'
   /allposts:
     get:
-      summary: 获取全部帖子
+      summary: 获取首页全部帖子
       responses:
         200:
           description: ok
           content:
             application/json:
               schema:
-                type: object
-                properties:
-                  id:
-                    type: integer
-                  title:
-                    type: string
-                  summary:
-                    type: string
-                  image:
-                    type: string
-                  like_count:
-                    type: integer
-                  comment_count:
-                    type: integer
-                  last_active_at:
-                    type: integer
+                $ref: '#/components/schemas/PostListVO'
   /posts/{postId}:
     get:
       summary: 获取帖子详情
@@ -261,9 +277,7 @@ paths:
             type: integer
       responses:
         200:
-          description: ok
           $ref: '#/components/responses/Ok'
-
   /posts/{postId}/cancel_like:
     post:
       summary: 取消帖子点赞
@@ -275,9 +289,210 @@ paths:
             type: integer
       responses:
         200:
-          description: ok
           $ref: '#/components/responses/Ok'
+  /all_secondhand_posts:
+    get:
+      summary: 获取全部二手交易帖子
+      responses:
+        200:
+          description: ok
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/PostListVO'
+                  - type: object
+                    properties:
+                      trade_category:
+                        $ref: '#/components/schemas/TradeCategory'
+                      campus:
+                        $ref: '#/components/schemas/Campus'
+  /secondhand_posts:
+    post:
+      summary: 发布二手交易帖子
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                title:
+                  type: string
+                content:
+                  type: string
+                images:
+                  type: array
+                  items:
+                    type: string
+                    maxItems: 9
+                trade_category:
+                  $ref: '#/components/schemas/TradeCategory'
+                campus:
+                  $ref: '#/components/schemas/Campus'
+      responses:
+        200:
+          $ref: '#/components/responses/Ok'
+  /secondhand_posts/{secondhandPostId}:
+    get:
+      summary: 获取二手交易帖子详情
+      parameters:
+        - in: path
+          name: secondhandPostId
+          required: true
+          schema:
+            type: integer
+      responses:
+        200:
+          description: ok
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: integer
+                  title:
+                    type: string
+                  summary:
+                    type: string
+                  images:
+                    type: array
+                    items:
+                      type: string
+                  like_count:
+                    type: integer
+                  comment_count:
+                    type: integer
+                  last_active_at:
+                    type: integer
+                  attitude_status:
+                    $ref: '#/components/schemas/AttitudeStatus'
+                  trade_category:
+                    $ref: '#/components/schemas/TradeCategory'
+                  campus:
+                    $ref: '#/components/schemas/Campus'
 
+  /all_anonymous_posts:
+    get:
+      summary: 获取全部匿名帖子
+      responses:
+        200:
+          description: ok
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/PostListVO'
+                  - type: object
+                    properties:
+                      trade_category:
+                        $ref: '#/components/schemas/TradeCategory'
+                      campus:
+                        $ref: '#/components/schemas/Campus'
+  /anonymous_posts:
+    post:
+      summary: 发表匿名帖子
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                title:
+                  type: string
+                content:
+                  type: string
+                images:
+                  type: array
+                  items:
+                    type: string
+                    maxItems: 9
+                topic_id:
+                  $ref: '#/components/schemas/TradeCategory'
+                display_name:
+                  type: string
+      responses:
+        200:
+          $ref: '#/components/responses/Ok'
+  /anonymous_posts/{anonymousPostId}:
+    get:
+      summary: 获取匿名帖子详情
+      parameters:
+        - in: path
+          name: anonymousPostId
+          required: true
+          schema:
+            type: integer
+      responses:
+        200:
+          description: ok
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: integer
+                  title:
+                    type: string
+                  summary:
+                    type: string
+                  images:
+                    type: array
+                    items:
+                      type: string
+                  like_count:
+                    type: integer
+                  comment_count:
+                    type: integer
+                  last_active_at:
+                    type: integer
+                  attitude_status:
+                    $ref: '#/components/schemas/AttitudeStatus'
+  /topics:
+    get:
+      summary: 话题查询
+      parameters:
+        - in: query
+          name: board
+          required: true
+          schema:
+            type: integer
+      responses:
+        200:
+          description: ok
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: integer
+                  name:
+                    type: string
+  /topics/{topicId}:
+    get:
+      summary: 话题查询
+      parameters:
+        - in: path
+          name: topicId
+          required: true
+          schema:
+            type: integer
+      responses:
+        200:
+          description: ok
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  participate_user_count:
+                    type: integer
+                    description: 参与人数
+                  discussion_amout:
+                    type: integer
+                    description: 讨论量
   /user:
     get:
       summary: 查看个人信息
@@ -295,6 +510,7 @@ paths:
               schema:
                 allOf:
                   - $ref: '#/components/schemas/UserVO'
+                  - type: object
                     properties:
                       notification_count:
                         type: integer
@@ -360,6 +576,16 @@ components:
         Sort order:
          * `1` - 评论
          * `2` - 帖子
+    Board:
+      type: integer
+      enum: [1, 2, 3, 4, 5]
+      description: >
+        Sort order:
+          * `1` - 评论
+          * `2` - 二手区
+          * `2` - 问点事
+          * `2` - 匿名墙
+          * `2` - 一起玩
     Gender:
       type: integer
       enum: [0, 1, 2]
@@ -387,6 +613,46 @@ components:
           type: string
         gender:
           type: string
+    PostListVO:
+      type: object
+      properties:
+        id:
+          type: integer
+        title:
+          type: string
+        summary:
+          type: string
+        image:
+          type: string
+        like_count:
+          type: integer
+        comment_count:
+          type: integer
+        last_active_at:
+          type: integer
+        created_by:
+          $ref: '#/components/schemas/UserVO'
+    TradeCategory:
+      type: integer
+      enum: [1, 2, 3, 4, 5]
+      description: >
+        Sort order:
+         * `1` - 综合
+         * `2` - 数码
+         * `3` - 衣物
+         * `4` - 书刊
+         * `5` - 生活
+    Campus:
+      type: integer
+      enum: [1, 2, 3, 4, 5, 6]
+      description: >
+        Sort order:
+         * `1` - 全校区
+         * `2` - 文理学部
+         * `3` - 信息学部
+         * `4` - 工学部
+         * `5` - 医学部
+         * `6` - 线上
     Error:
       type: object
       properties:
