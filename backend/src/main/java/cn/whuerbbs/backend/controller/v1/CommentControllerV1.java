@@ -33,7 +33,7 @@ public class CommentControllerV1 {
                                        @RequestParam("post_id") long postId,
                                        @CurrentUser CurrentUserData currentUserData) {
         // TODO 鉴权
-        var pageRequest = PageRequest.of(page - 1, perPage, Sort.by("createdAt").descending());
+        var pageRequest = PageRequest.of(page, perPage, Sort.by("createdAt").descending());
         var pageable = commentService.getPageable(postId, pageRequest);
         return pageable.map(comment -> {
             var vo = new CommentVO(comment);

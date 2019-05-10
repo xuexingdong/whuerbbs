@@ -50,7 +50,7 @@ public class PostControllerV1 {
             @Validated @Range(min = 1, max = Integer.MAX_VALUE) @RequestParam(defaultValue = "1") int page,
             @Validated @Range(min = 1, max = 100) @RequestParam(value = "per_page", defaultValue = "10") int perPage,
             @CurrentUser CurrentUserData currentUserData) {
-        var pageRequest = PageRequest.of(page - 1, perPage, Sort.by("lastActiveAt").descending());
+        var pageRequest = PageRequest.of(page, perPage, Sort.by("lastActiveAt").descending());
         var postPage = postService.getPageable(pageRequest);
         return postPage.map(post -> {
             var attachmentOptional = attachmentService.getFirstByPostId(post.getId());
