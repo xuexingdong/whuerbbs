@@ -10,4 +10,6 @@ public interface UserMapper {
     int insert(User user);
 
     Optional<User> selectById(String id);
+
+    int update(User user);
 }

@@ -87,4 +87,21 @@ public class UserServiceImpl implements UserService {
     public void logout(String token) {
         jwtService.removeToken(token);
     }
+
+    @Override
+    public int modifySchool(String userId, String school) {
+        User user = new User();
+        user.setId(userId);
+        user.setSchool(school);
+        return userMapper.update(user);
+    }
+
+    @Override
+    public int modifyGradeAndDiploma(String userId, String grade, String diploma) {
+        User user = new User();
+        user.setId(userId);
+        user.setGrade(grade);
+        user.setDiploma(diploma);
+        return userMapper.update(user);
+    }
 }

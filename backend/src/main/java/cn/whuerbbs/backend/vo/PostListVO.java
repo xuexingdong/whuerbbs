@@ -1,26 +1,33 @@
 package cn.whuerbbs.backend.vo;
 
 import cn.whuerbbs.backend.common.Constants;
+import cn.whuerbbs.backend.enumeration.Board;
 import cn.whuerbbs.backend.model.Post;
+import cn.whuerbbs.backend.model.Topic;
 import org.springframework.beans.BeanUtils;
 
 import java.time.LocalDateTime;
+import java.util.List;
+import java.util.stream.Collectors;
 
 public class PostListVO {
     private long id;
     private UserVO createdBy;
     private String title;
     private String summary;
+    private Board board;
     private String image;
+    private List<TopicVO> topics;
     private long likeCount;
     private long commentCount;
     private LocalDateTime lastActiveAt;
 
-    public PostListVO(Post post, String image) {
+    public PostListVO(Post post, String image, List<Topic> topics) {
         BeanUtils.copyProperties(post, this);
         this.image = image;
         this.createdBy = new UserVO(post.getUser());
         this.summary = post.getContent().substring(0, Math.min(Constants.POST_SUMMARY_LENGTH, post.getContent().length()));
+        this.topics = topics.stream().map(TopicVO::new).collect(Collectors.toList());
     }
 
     public long getId() {
@@ -55,12 +62,28 @@ public class PostListVO {
         this.summary = summary;
     }
 
+    public Board getBoard() {
+        return board;
+    }
+
+    public void setBoard(Board board) {
+        this.board = board;
+    }
+
     public String getImage() {
         return image;
     }
 
     public void setImage(String image) {
         this.image = image;
+    }
+
+    public List<TopicVO> getTopics() {
+        return topics;
+    }
+
+    public void setTopics(List<TopicVO> topics) {
+        this.topics = topics;
     }
 
     public long getLikeCount() {

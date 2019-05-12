@@ -12,7 +12,7 @@ import java.util.Optional;
 public interface PostMapper {
     int insert(Post post);
 
-    List<Post> selectPageable();
+    List<Post> selectPageable(Post post);
 
     Optional<Post> selectById(long id);
 
@@ -21,4 +21,10 @@ public interface PostMapper {
     int updateLikeCount(@Param("id") long id, @Param("likeCount") long likeCount);
 
     int updateCommentCount(@Param("id") long id, @Param("commentCount") long commentCount);
+
+    List<Post> selectByIds(List<Long> ids);
+
+    List<Post> selectPostIdsByTopicId(int topicId);
+
+    List<Post> selectHotPostIdsByTopicId(int topicId);
 }

@@ -13,4 +13,8 @@ public interface UserService {
     Optional<User> getById(String userId);
 
     void logout(String token);
+
+    int modifySchool(String userId, String school);
+
+    int modifyGradeAndDiploma(String userId, String grade, String diploma);
 }

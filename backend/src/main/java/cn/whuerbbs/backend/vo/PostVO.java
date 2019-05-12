@@ -2,10 +2,12 @@ package cn.whuerbbs.backend.vo;
 
 import cn.whuerbbs.backend.enumeration.AttitudeStatus;
 import cn.whuerbbs.backend.model.Post;
+import cn.whuerbbs.backend.model.Topic;
 import org.springframework.beans.BeanUtils;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class PostVO {
     private long id;
@@ -18,11 +20,16 @@ public class PostVO {
     private LocalDateTime createdAt;
     private LocalDateTime lastActiveAt;
     private AttitudeStatus attitudeStatus;
+    private List<TopicVO> topics;
+    // 是否热门帖子
+    private boolean hot;
 
-    public PostVO(Post post, List<String> images) {
+    public PostVO(Post post, List<String> images, List<Topic> topics) {
         BeanUtils.copyProperties(post, this);
         this.createdBy = new UserVO(post.getUser());
         this.images = images;
+        this.topics = topics.stream().map(TopicVO::new).collect(Collectors.toList());
+        this.hot = this.likeCount + this.commentCount * 3 > 50;
     }
 
     public long getId() {
@@ -103,5 +110,21 @@ public class PostVO {
 
     public void setAttitudeStatus(AttitudeStatus attitudeStatus) {
         this.attitudeStatus = attitudeStatus;
+    }
+
+    public List<TopicVO> getTopics() {
+        return topics;
+    }
+
+    public void setTopics(List<TopicVO> topics) {
+        this.topics = topics;
+    }
+
+    public boolean isHot() {
+        return hot;
+    }
+
+    public void setHot(boolean hot) {
+        this.hot = hot;
     }
 }

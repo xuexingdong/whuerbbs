@@ -8,6 +8,21 @@
         values (#{id}, #{unionid}, #{nickname}, #{avatarUrl}, #{gender}, #{country}, #{province}, #{city},
                 #{lastLoginAt}, #{createdAt})
     </insert>
+    <update id="update">
+        update user
+        <set>
+            <if test="school != null">
+                school = #{school},
+            </if>
+            <if test="grade != null">
+                grade = #{grade},
+            </if>
+            <if test="diploma != null">
+                diploma = #{diploma},
+            </if>
+        </set>
+        where id = #{id}
+    </update>
     <select id="selectById" resultType="User">
         select *
         from user

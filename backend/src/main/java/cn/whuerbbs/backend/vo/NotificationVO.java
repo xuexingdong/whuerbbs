@@ -4,6 +4,8 @@ import cn.whuerbbs.backend.enumeration.NotificationType;
 import cn.whuerbbs.backend.model.Notification;
 import org.springframework.beans.BeanUtils;
 
+import java.time.LocalDateTime;
+
 public class NotificationVO {
     private long id;
     private NotificationType type;
@@ -11,6 +13,7 @@ public class NotificationVO {
     private String content;
     private String summary;
     private UserVO fromUser;
+    private LocalDateTime createdAt;
 
     public NotificationVO(Notification notification) {
         BeanUtils.copyProperties(notification, this);
@@ -64,5 +67,13 @@ public class NotificationVO {
 
     public void setFromUser(UserVO fromUser) {
         this.fromUser = fromUser;
+    }
+
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(LocalDateTime createdAt) {
+        this.createdAt = createdAt;
     }
 }

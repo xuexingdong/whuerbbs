@@ -1,6 +1,7 @@
 package cn.whuerbbs.backend.service.impl;
 
 import cn.whuerbbs.backend.dto.PostDTO;
+import cn.whuerbbs.backend.enumeration.Board;
 import cn.whuerbbs.backend.mapper.PostAttachmentMapper;
 import cn.whuerbbs.backend.mapper.PostMapper;
 import cn.whuerbbs.backend.model.Post;
@@ -51,9 +52,11 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
-    public Page<Post> getPageable(Pageable pageable) {
+    public Page<Post> getPageableByBoard(Pageable pageable, Board board) {
         PageHelper.startPage(pageable.getPageNumber(), pageable.getPageSize());
-        var posts = postMapper.selectPageable();
+        var post = new Post();
+        post.setBoard(board);
+        var posts = postMapper.selectPageable(post);
         var pageInfo = new PageInfo<>(posts);
         return new PageImpl<>(posts, pageable, pageInfo.getTotal());
     }
@@ -61,5 +64,21 @@ public class PostServiceImpl implements PostService {
     @Override
     public Optional<Post> getById(long postId) {
         return postMapper.selectById(postId);
+    }
+
+    @Override
+    public Page<Post> getPostsPageableByTopicId(Pageable pageable, int topicId) {
+        PageHelper.startPage(pageable.getPageNumber(), pageable.getPageSize());
+        var posts = postMapper.selectPostIdsByTopicId(topicId);
+        var pageInfo = new PageInfo<>(posts);
+        return new PageImpl<>(posts, pageable, pageInfo.getTotal());
+    }
+
+    @Override
+    public Page<Post> getHotPostsPageableByTopicId(Pageable pageable, int topicId) {
+        PageHelper.startPage(pageable.getPageNumber(), pageable.getPageSize());
+        var posts = postMapper.selectHotPostIdsByTopicId(topicId);
+        var pageInfo = new PageInfo<>(posts);
+        return new PageImpl<>(posts, pageable, pageInfo.getTotal());
     }
 }

@@ -5,4 +5,6 @@ public final class Constants {
     public static final int POST_SUMMARY_LENGTH = 63;
     // 通知截取
     public static final int NOTIFICATION_SUMMARY_LENGTH = 18;
+
+
 }

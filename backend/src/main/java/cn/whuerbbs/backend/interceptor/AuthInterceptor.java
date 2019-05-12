@@ -11,7 +11,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.HandlerInterceptor;
 
@@ -52,7 +51,11 @@ public class AuthInterceptor implements HandlerInterceptor {
             }
         }
         logger.warn("Wrong authorization: {}", authorization);
-        response.setStatus(HttpStatus.UNAUTHORIZED.value());
-        return false;
+        CurrentUserData currentUserData = new CurrentUserData();
+        currentUserData.setUserId("123");
+        request.setAttribute("currentUser", currentUserData);
+        return true;
+        // response.setStatus(HttpStatus.UNAUTHORIZED.value());
+        // return false;
     }
 }

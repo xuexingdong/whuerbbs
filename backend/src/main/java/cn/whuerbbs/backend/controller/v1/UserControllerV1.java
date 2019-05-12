@@ -2,15 +2,19 @@ package cn.whuerbbs.backend.controller.v1;
 
 import cn.whuerbbs.backend.common.CurrentUser;
 import cn.whuerbbs.backend.common.CurrentUserData;
+import cn.whuerbbs.backend.common.SchoolConstants;
+import cn.whuerbbs.backend.dto.ModifyGradeDTO;
+import cn.whuerbbs.backend.dto.ModifySchoolDTO;
 import cn.whuerbbs.backend.exception.BusinessException;
 import cn.whuerbbs.backend.service.NotificationService;
 import cn.whuerbbs.backend.service.UserService;
 import cn.whuerbbs.backend.vo.SelfUserVO;
 import cn.whuerbbs.backend.vo.UserVO;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.Arrays;
 
 @RestController
 public class UserControllerV1 {
@@ -27,6 +31,25 @@ public class UserControllerV1 {
         var user = userOptional.orElseThrow(() -> new BusinessException("用户不存在"));
         long unreadCount = notificationService.countUnreadByUserId(user.getId());
         return new SelfUserVO(user, unreadCount);
+    }
+
+    @PatchMapping("/user/school")
+    public void modifySchoolInfo(@Validated @RequestBody ModifySchoolDTO modifySchoolDTO, @CurrentUser CurrentUserData currentUserData) {
+        var index = Arrays.binarySearch(SchoolConstants.SCHOOL_LIST, modifySchoolDTO.getSchool());
+        if (index == -1) {
+            throw new BusinessException("非法参数");
+        }
+        userService.modifySchool(currentUserData.getUserId(), modifySchoolDTO.getSchool());
+    }
+
+    @PatchMapping("/user/grade")
+    public void modifyGradeInfo(@Validated @RequestBody ModifyGradeDTO modifyGradeDTO, @CurrentUser CurrentUserData currentUserData) {
+        var index1 = Arrays.binarySearch(SchoolConstants.GRADE_LIST, modifyGradeDTO.getGrade());
+        var index2 = Arrays.binarySearch(SchoolConstants.DIPLOMA_LIST, modifyGradeDTO.getDiploma());
+        if (index1 == -1 || index2 == -1) {
+            throw new BusinessException("非法参数");
+        }
+        userService.modifyGradeAndDiploma(currentUserData.getUserId(), modifyGradeDTO.getGrade(), modifyGradeDTO.getDiploma());
     }
 
     @GetMapping("/users/{userId}")
