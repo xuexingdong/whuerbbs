@@ -1,7 +1,6 @@
 ALTER TABLE post
     ADD COLUMN `board` smallint UNSIGNED NOT NULL DEFAULT 1 AFTER `title`;
 
-DROP table if exists secondhand_post;
 CREATE TABLE secondhand_post
 (
     `id`             int UNSIGNED      NOT NULL AUTO_INCREMENT,
@@ -12,7 +11,6 @@ CREATE TABLE secondhand_post
     KEY (`post_id`)
 );
 
-DROP table if exists anonymous_post;
 CREATE TABLE anonymous_post
 (
     `id`             int UNSIGNED NOT NULL AUTO_INCREMENT,
@@ -22,7 +20,6 @@ CREATE TABLE anonymous_post
     KEY (`post_id`)
 );
 
-DROP table if exists topic;
 CREATE TABLE topic
 (
     `id`                     int UNSIGNED        NOT NULL AUTO_INCREMENT,
@@ -39,7 +36,6 @@ CREATE TABLE topic
     KEY (`board`)
 );
 
-DROP table if exists post_topic;
 CREATE TABLE post_topic
 (
     `id`       int UNSIGNED NOT NULL AUTO_INCREMENT,

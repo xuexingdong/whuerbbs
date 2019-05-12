@@ -1,6 +1,5 @@
 SET NAMES utf8mb4;
 
-DROP table if exists user;
 CREATE TABLE user
 (
     `id`            char(32)     NOT NULL,
@@ -18,7 +17,6 @@ CREATE TABLE user
     KEY (`nickname`)
 );
 
-DROP table if exists attachment;
 CREATE TABLE attachment
 (
     `id`         char(32)     NOT NULL,
@@ -29,7 +27,6 @@ CREATE TABLE attachment
     PRIMARY KEY (`id`)
 );
 
-DROP table if exists post;
 CREATE TABLE post
 (
     `id`             int UNSIGNED NOT NULL AUTO_INCREMENT,
@@ -46,7 +43,6 @@ CREATE TABLE post
 );
 
 
-DROP table if exists post_attachment;
 CREATE TABLE post_attachment
 (
     `id`            int UNSIGNED NOT NULL AUTO_INCREMENT,
@@ -57,7 +53,6 @@ CREATE TABLE post_attachment
     KEY (`attachment_id`) USING HASH
 );
 
-DROP table if exists comment;
 CREATE TABLE comment
 (
     `id`         int UNSIGNED NOT NULL AUTO_INCREMENT,
@@ -72,7 +67,6 @@ CREATE TABLE comment
     KEY (`user_id`) USING HASH
 );
 
-DROP table if exists attitude;
 CREATE TABLE attitude
 (
     `id`         int UNSIGNED NOT NULL AUTO_INCREMENT,
@@ -86,7 +80,6 @@ CREATE TABLE attitude
     UNIQUE KEY (`target`, `target_id`, `user_id`, `deleted`) USING HASH
 );
 
-DROP table if exists notification;
 CREATE TABLE notification
 (
     `id`           int UNSIGNED NOT NULL AUTO_INCREMENT,
@@ -103,7 +96,6 @@ CREATE TABLE notification
     KEY (`reference_id`) USING HASH
 );
 
-DROP table if exists user_wx;
 CREATE TABLE user_wx
 (
     `id`         int UNSIGNED NOT NULL AUTO_INCREMENT,
