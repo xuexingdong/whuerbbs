@@ -8,12 +8,12 @@ public interface BaseEnum {
     @JsonValue
     int value();
 
-    static <T extends BaseEnum> T fromValue(Class<T> enumType, Integer value) {
+    static <T extends BaseEnum> T fromValue(Class<T> enumType, int value) {
         for (T object : enumType.getEnumConstants()) {
             if (Objects.equals(value, object.value())) {
                 return object;
             }
         }
-        throw new IllegalArgumentException("No enum value " + value + " of " + enumType.getCanonicalName());
+        return null;
     }
 }

@@ -5,10 +5,13 @@ import cn.whuerbbs.backend.common.CurrentUserData;
 import cn.whuerbbs.backend.dto.PostDTO;
 import cn.whuerbbs.backend.enumeration.AttitudeStatus;
 import cn.whuerbbs.backend.enumeration.AttitudeTarget;
+import cn.whuerbbs.backend.enumeration.Board;
 import cn.whuerbbs.backend.exception.BusinessException;
+import cn.whuerbbs.backend.model.Post;
 import cn.whuerbbs.backend.service.AttachmentService;
 import cn.whuerbbs.backend.service.AttitudeService;
 import cn.whuerbbs.backend.service.PostService;
+import cn.whuerbbs.backend.service.TopicService;
 import cn.whuerbbs.backend.util.ImageUtil;
 import cn.whuerbbs.backend.vo.PostListVO;
 import cn.whuerbbs.backend.vo.PostVO;
@@ -16,11 +19,11 @@ import org.hibernate.validator.constraints.Range;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Sort;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.constraints.NotNull;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 
@@ -38,6 +41,9 @@ public class PostControllerV1 {
     private AttitudeService attitudeService;
 
     @Autowired
+    private TopicService topicService;
+
+    @Autowired
     private ImageUtil imageUtil;
 
     @PostMapping("posts")
@@ -45,16 +51,38 @@ public class PostControllerV1 {
         postService.create(currentUserData.getUserId(), postDTO);
     }
 
-    @GetMapping("allposts")
-    public Page<PostListVO> getAllPosts(
+    /**
+     * 获取全部帖子（首页、问点事、一起玩共用）
+     *
+     * @param board
+     * @param topicId
+     * @param page
+     * @param perPage
+     * @param currentUserData
+     * @return
+     */
+    @GetMapping("posts")
+    public Page<PostListVO> getPosts(
+            @Validated @RequestParam(required = false) Board board,
+            @Validated @RequestParam(value = "topic_id", required = false) Integer topicId,
+            @Validated @RequestParam(value = "hot", required = false) boolean hot,
             @Validated @Range(min = 1, max = Integer.MAX_VALUE) @RequestParam(defaultValue = "1") int page,
             @Validated @Range(min = 1, max = 100) @RequestParam(value = "per_page", defaultValue = "10") int perPage,
             @CurrentUser CurrentUserData currentUserData) {
-        var pageRequest = PageRequest.of(page, perPage, Sort.by("lastActiveAt").descending());
-        var postPage = postService.getPageable(pageRequest);
+        var pageRequest = PageRequest.of(page, perPage);
+        Page<Post> postPage;
+        // 按版块查询
+        if (Objects.nonNull(board)) {
+            postPage = postService.getPageableByBoard(pageRequest, board);
+        } else if (hot) {
+            postPage = postService.getHotPostsPageableByTopicId(pageRequest, topicId);
+        } else {
+            postPage = postService.getPostsPageableByTopicId(pageRequest, topicId);
+        }
         return postPage.map(post -> {
             var attachmentOptional = attachmentService.getFirstByPostId(post.getId());
-            return new PostListVO(post, attachmentOptional.map(attachment -> imageUtil.getFullPath(attachment.getPath())).orElse(null));
+            var topics = topicService.getTopicsByPostId(post.getId());
+            return new PostListVO(post, attachmentOptional.map(attachment -> imageUtil.getFullPath(attachment.getPath())).orElse(null), topics);
         });
     }
 
@@ -63,7 +91,8 @@ public class PostControllerV1 {
         var postOptional = postService.getById(postId);
         var post = postOptional.orElseThrow(() -> new BusinessException("帖子不存在"));
         var attachments = attachmentService.getByPostId(post.getId());
-        var postVO = new PostVO(post, attachments.stream().map(attachment -> imageUtil.getFullPath(attachment.getPath())).collect(Collectors.toList()));
+        var topics = topicService.getTopicsByPostId(post.getId());
+        var postVO = new PostVO(post, attachments.stream().map(attachment -> imageUtil.getFullPath(attachment.getPath())).collect(Collectors.toList()), topics);
         postVO.setAttitudeStatus(attitudeService.getAttitudeStatus(currentUserData.getUserId(), AttitudeTarget.POST, String.valueOf(postId)));
         return postVO;
     }

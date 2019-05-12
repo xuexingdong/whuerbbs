@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.whuerbbs.backend.mapper.TopicMapper">
+    <select id="selectByBoard" resultType="Topic">
+        select *
+        from topic
+        where board = #{board}
+          and active = 1
+          and deleted = 0
+    </select>
+    <select id="selectByPostId" resultType="Topic">
+        select *
+        from topic t
+                 join post_topic pt
+        where t.id = pt.topic_id
+          and t.active = 1
+          and t.deleted = 0
+          and pt.post_id = #{postId}
+    </select>
+    <select id="selectByIds" resultType="Topic">
+        select *
+        from topic where id in
+        <foreach collection="list" item="item" separator="," open="(" close=")">
+            #{item}
+        </foreach>
+        and active = 1
+        and deleted = 0
+    </select>
+    <select id="selectByTitle" resultType="Topic">
+        select *
+        from topic
+        where title = #{title}
+          and deleted = 0
+    </select>
+    <select id="selectByTitles" resultType="Topic">
+        select *
+        from topic
+        where board = #{board}
+        and title in
+        <foreach collection="titles" item="item" separator="," open="(" close=")">
+            #{item}
+        </foreach>
+        and deleted = 0
+    </select>
+    <select id="selectById" resultType="Topic">
+        select *
+        from topic
+        where id = #{id}
+          and deleted = 0
+    </select>
+    <select id="getParticipateUserCountAndDiscussionMountById" resultType="map">
+        select count(1) count1, sum(p.comment_count) count2
+        from topic t
+                 join post_topic pt on t.id = pt.topic_id
+                 join post p on p.id = pt.post_id
+        where p.deleted = 0
+          and t.id = #{id}
+    </select>
+</mapper>

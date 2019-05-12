@@ -21,7 +21,7 @@ import java.util.Map;
  */
 
 @MappedJdbcTypes(JdbcType.INTEGER)
-@MappedTypes({AttitudeTarget.class, AttitudeStatus.class, Gender.class, NotificationType.class})
+@MappedTypes({AttitudeTarget.class, AttitudeStatus.class, Gender.class, NotificationType.class, Board.class, Campus.class, TradeCategory.class})
 public class IntegerEnumHandler<E extends BaseEnum> extends BaseTypeHandler<E> {
     private Map<Integer, E> enumMap = new HashMap<>();
 

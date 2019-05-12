@@ -1,5 +1,6 @@
 package cn.whuerbbs.backend.model;
 
+import cn.whuerbbs.backend.enumeration.Board;
 import cn.whuerbbs.backend.model.base.BaseModel;
 import cn.whuerbbs.backend.model.base.Identifiable;
 
@@ -9,6 +10,7 @@ public class Post extends BaseModel implements Identifiable<Long> {
     private Long id;
     private String title;
     private String content;
+    private Board board;
     private long likeCount;
     private long commentCount;
 
@@ -17,6 +19,7 @@ public class Post extends BaseModel implements Identifiable<Long> {
 
     private User user;
 
+    @Override
     public Long getId() {
         return id;
     }
@@ -39,6 +42,14 @@ public class Post extends BaseModel implements Identifiable<Long> {
 
     public void setContent(String content) {
         this.content = content;
+    }
+
+    public Board getBoard() {
+        return board;
+    }
+
+    public void setBoard(Board board) {
+        this.board = board;
     }
 
     public long getLikeCount() {

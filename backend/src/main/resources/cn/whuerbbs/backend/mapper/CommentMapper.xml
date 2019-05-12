@@ -4,6 +4,7 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="cn.whuerbbs.backend.mapper.CommentMapper">
     <resultMap id="commentResult" type="Comment" autoMapping="true">
+        <id property="id" column="cid"/>
         <association property="user" javaType="User" autoMapping="true"/>
     </resultMap>
 
@@ -18,7 +19,7 @@
           and deleted = 0
     </update>
     <select id="selectByPostIdPageable" resultMap="commentResult">
-        select c.id,
+        select c.id cid,
                c.content,
                c.like_count,
                c.post_id,

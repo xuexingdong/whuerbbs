@@ -1,3 +1,4 @@
 rootProject.name = 'whuerbbs'
 include 'backend'
+include 'admin'
 

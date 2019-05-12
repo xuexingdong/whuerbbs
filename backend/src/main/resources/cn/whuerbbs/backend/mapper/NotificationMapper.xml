@@ -4,6 +4,7 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="cn.whuerbbs.backend.mapper.NotificationMapper">
     <resultMap id="notificationResult" type="Notification" autoMapping="true">
+        <id property="id" column="nid"/>
         <association property="fromUser" javaType="User" autoMapping="true"/>
     </resultMap>
     <insert id="insert">
@@ -11,7 +12,7 @@
         values (#{id}, #{type}, #{referenceId}, #{content}, #{fromUserId}, #{toUserId}, #{beRead}, #{createdAt})
     </insert>
     <select id="selectByToUserIdPageable" resultMap="notificationResult">
-        select n.id,
+        select n.id nid,
                n.type,
                n.content,
                n.reference_id,

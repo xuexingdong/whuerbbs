@@ -12,4 +12,6 @@ public interface AttachmentService{
     List<Attachment> getByPostId(long postId);
 
     Optional<Attachment> getFirstByPostId(long postId);
+
+    Optional<Attachment> getById(String id);
 }

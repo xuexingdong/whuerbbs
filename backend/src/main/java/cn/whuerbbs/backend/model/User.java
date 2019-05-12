@@ -15,6 +15,9 @@ public class User extends BaseModel implements Identifiable<String> {
     private String country;
     private String province;
     private String city;
+    private String school;
+    private String grade;
+    private String diploma;
     private LocalDateTime lastLoginAt;
 
     @Override
@@ -80,6 +83,30 @@ public class User extends BaseModel implements Identifiable<String> {
 
     public void setCity(String city) {
         this.city = city;
+    }
+
+    public String getSchool() {
+        return school;
+    }
+
+    public void setSchool(String school) {
+        this.school = school;
+    }
+
+    public String getGrade() {
+        return grade;
+    }
+
+    public void setGrade(String grade) {
+        this.grade = grade;
+    }
+
+    public String getDiploma() {
+        return diploma;
+    }
+
+    public void setDiploma(String diploma) {
+        this.diploma = diploma;
     }
 
     public LocalDateTime getLastLoginAt() {

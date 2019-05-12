@@ -63,7 +63,7 @@ public class AttachmentServiceImpl implements AttachmentService {
     public List<Attachment> getByPostId(long postId) {
         var postAttachments = postAttachmentMapper.selectByPostId(postId);
         if (postAttachments.isEmpty()) {
-            return new ArrayList<>();
+            return List.of();
         }
         return attachmentMapper.selectByIds(postAttachments.stream().map(PostAttachment::getAttachmentId).collect(Collectors.toList()));
     }
@@ -77,5 +77,10 @@ public class AttachmentServiceImpl implements AttachmentService {
             return Optional.empty();
         }
         return attachmentMapper.selectById(postAttachments.get(0).getAttachmentId());
+    }
+
+    @Override
+    public Optional<Attachment> getById(String id) {
+        return attachmentMapper.selectById(id);
     }
 }
