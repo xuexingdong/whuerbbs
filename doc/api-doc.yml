@@ -563,11 +563,11 @@ components:
       enum: [1, 2, 3, 4, 5]
       description: >
         Sort order:
-          * `1` - 评论
+          * `1` - 新鲜事
           * `2` - 二手区
-          * `2` - 问点事
-          * `2` - 匿名墙
-          * `2` - 一起玩
+          * `3` - 问点事
+          * `4` - 匿名墙
+          * `5` - 一起玩
     Gender:
       type: integer
       enum: [0, 1, 2]
