@@ -46,6 +46,7 @@ public class AttitudeServiceImpl implements AttitudeService {
         var success = attitudeMapper.insert(attitude);
         if (!success) {
             TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+            return;
         }
 
         postMapper.updateLastActiveTime(Long.parseLong(attitude.getTargetId()), LocalDateTime.now());

@@ -72,12 +72,14 @@ public class PostControllerV1 {
         var pageRequest = PageRequest.of(page, perPage);
         Page<Post> postPage;
         // 按版块查询
-        if (Objects.nonNull(board)) {
-            postPage = postService.getPageableByBoard(pageRequest, board);
-        } else if (hot) {
-            postPage = postService.getHotPostsPageableByTopicId(pageRequest, topicId);
+        if (Objects.nonNull(topicId)) {
+            if (hot) {
+                postPage = postService.getHotPostsPageableByTopicId(pageRequest, topicId);
+            } else {
+                postPage = postService.getPostsPageableByTopicId(pageRequest, topicId);
+            }
         } else {
-            postPage = postService.getPostsPageableByTopicId(pageRequest, topicId);
+            postPage = postService.getPageableByBoard(pageRequest, board);
         }
         return postPage.map(post -> {
             var attachmentOptional = attachmentService.getFirstByPostId(post.getId());
