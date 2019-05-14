@@ -33,7 +33,7 @@ public class UserControllerV1 {
         return new SelfUserVO(user, unreadCount);
     }
 
-    @PatchMapping("/user/school")
+    @PutMapping("/user/school")
     public void modifySchoolInfo(@Validated @RequestBody ModifySchoolDTO modifySchoolDTO, @CurrentUser CurrentUserData currentUserData) {
         var index = Arrays.binarySearch(SchoolConstants.SCHOOL_LIST, modifySchoolDTO.getSchool());
         if (index == -1) {
@@ -42,7 +42,7 @@ public class UserControllerV1 {
         userService.modifySchool(currentUserData.getUserId(), modifySchoolDTO.getSchool());
     }
 
-    @PatchMapping("/user/grade")
+    @PutMapping("/user/grade")
     public void modifyGradeInfo(@Validated @RequestBody ModifyGradeDTO modifyGradeDTO, @CurrentUser CurrentUserData currentUserData) {
         var index1 = Arrays.binarySearch(SchoolConstants.GRADE_LIST, modifyGradeDTO.getGrade());
         var index2 = Arrays.binarySearch(SchoolConstants.DIPLOMA_LIST, modifyGradeDTO.getDiploma());

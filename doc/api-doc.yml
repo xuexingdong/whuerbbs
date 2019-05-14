@@ -53,7 +53,7 @@ paths:
                   like_count:
                     type: integer
                   created_at:
-                    type: string
+                    type: date-time
                   created_by:
                     $ref: '#/components/schemas/UserVO'
                   attitude_status:
@@ -166,6 +166,8 @@ paths:
                     type: string
                   from_user:
                     $ref: '#/components/schemas/UserVO'
+                  created_at:
+                    type: date-time
   /posts:
     get:
       summary: 获取全部帖子（全部、问点事、一起玩共用）
@@ -454,7 +456,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/UserVO'
   /user/school:
-    patch:
+    put:
       summary: 修改学院信息
       requestBody:
         content:
@@ -468,7 +470,7 @@ paths:
         200:
           $ref: '#/components/responses/Ok'
   /user/grade:
-    patch:
+    put:
       summary: 修改年级信息
       requestBody:
         content:
@@ -630,8 +632,10 @@ components:
           type: integer
         comment_count:
           type: integer
+        created_at:
+          type: date-time
         last_active_at:
-          type: integer
+          type: date-time
         created_by:
           $ref: '#/components/schemas/UserVO'
         topics:
