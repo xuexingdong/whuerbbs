@@ -516,6 +516,18 @@ paths:
                     type: array
                     items:
                       type: string
+  /anonymous_names:
+    get:
+      summary: 查看匿名名称列表
+      responses:
+        200:
+          description: ok
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: string
 
 components:
   responses:

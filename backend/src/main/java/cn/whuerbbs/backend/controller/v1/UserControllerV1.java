@@ -14,8 +14,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Arrays;
-
 @RestController
 public class UserControllerV1 {
 
@@ -35,8 +33,7 @@ public class UserControllerV1 {
 
     @PutMapping("/user/school")
     public void modifySchoolInfo(@Validated @RequestBody ModifySchoolDTO modifySchoolDTO, @CurrentUser CurrentUserData currentUserData) {
-        var index = Arrays.binarySearch(SchoolConstants.SCHOOL_LIST, modifySchoolDTO.getSchool());
-        if (index == -1) {
+        if (!SchoolConstants.SCHOOL_LIST.contains(modifySchoolDTO.getSchool())) {
             throw new BusinessException("非法参数");
         }
         userService.modifySchool(currentUserData.getUserId(), modifySchoolDTO.getSchool());
@@ -44,12 +41,13 @@ public class UserControllerV1 {
 
     @PutMapping("/user/grade")
     public void modifyGradeInfo(@Validated @RequestBody ModifyGradeDTO modifyGradeDTO, @CurrentUser CurrentUserData currentUserData) {
-        var index1 = Arrays.binarySearch(SchoolConstants.GRADE_LIST, modifyGradeDTO.getGrade());
-        var index2 = Arrays.binarySearch(SchoolConstants.DIPLOMA_LIST, modifyGradeDTO.getDiploma());
-        if (index1 == -1 || index2 == -1) {
+        var index1 = SchoolConstants.GRADE_LIST.contains(modifyGradeDTO.getGrade());
+        var index2 = SchoolConstants.DIPLOMA_LIST.contains(modifyGradeDTO.getDiploma());
+        if (index1 && index2) {
+            userService.modifyGradeAndDiploma(currentUserData.getUserId(), modifyGradeDTO.getGrade(), modifyGradeDTO.getDiploma());
+        } else {
             throw new BusinessException("非法参数");
         }
-        userService.modifyGradeAndDiploma(currentUserData.getUserId(), modifyGradeDTO.getGrade(), modifyGradeDTO.getDiploma());
     }
 
     @GetMapping("/users/{userId}")

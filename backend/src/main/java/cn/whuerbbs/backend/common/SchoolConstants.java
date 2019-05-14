@@ -1,7 +1,9 @@
 package cn.whuerbbs.backend.common;
 
+import java.util.List;
+
 public final class SchoolConstants {
-    public static final String[] SCHOOL_LIST = new String[]{
+    public static final List<String> SCHOOL_LIST = List.of(
             "哲学学院",
             "国学院",
             "历史学院",
@@ -45,9 +47,9 @@ public final class SchoolConstants {
             "医学职业技术学院",
             "弘毅学堂",
             "其他"
-    };
+    );
 
-    public static final String[] GRADE_LIST = new String[]{
+    public static final List<String> GRADE_LIST = List.of(
             "2011级",
             "2012级",
             "2013级",
@@ -59,12 +61,12 @@ public final class SchoolConstants {
             "2019级",
             "杰出校友",
             "不告诉你"
-    };
+    );
 
-    public static final String[] DIPLOMA_LIST = new String[]{
+    public static final List<String> DIPLOMA_LIST = List.of(
             "本科",
             "硕士",
             "博士",
-            "博士后",
-    };
+            "博士后"
+    );
 }

@@ -1,7 +1,9 @@
 package cn.whuerbbs.backend.common;
 
+import java.util.List;
+
 public class AnonymousNameConstants {
-    public static final String[] ANONYMOUS_NAME_LIST = new String[]{
+    public static final List<String> ANONYMOUS_NAME_LIST = List.of(
             "东湖村摸鱼仔",
             "奥场小情侣",
             "东湖村摸鱼仔",
@@ -34,5 +36,5 @@ public class AnonymousNameConstants {
             "路边测绘组合",
             "计院小码农",
             "物院一枝花"
-    };
+    );
 }
