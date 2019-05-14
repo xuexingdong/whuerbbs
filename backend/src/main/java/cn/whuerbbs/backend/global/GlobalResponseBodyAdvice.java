@@ -9,7 +9,6 @@ import org.springframework.http.server.ServerHttpResponse;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseBodyAdvice;
 
-import java.util.Map;
 import java.util.Objects;
 
 @RestControllerAdvice
@@ -29,9 +28,6 @@ public class GlobalResponseBodyAdvice implements ResponseBodyAdvice<Object> {
             return Resp.data(((Page) body).getContent());
         }
         if (body instanceof String) {
-            return body;
-        }
-        if (body instanceof Map) {
             return body;
         }
         return Resp.data(body);

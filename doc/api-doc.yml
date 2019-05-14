@@ -528,6 +528,30 @@ paths:
                 type: array
                 items:
                   type: string
+  /trade_categories:
+    get:
+      summary: 查看交易区域列表，返回值自己看，文档不准
+      responses:
+        200:
+          description: ok
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: string
+  /campuses:
+    get:
+      summary: 查看校区列表，返回值自己看，文档不准
+      responses:
+        200:
+          description: ok
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: string
 
 components:
   responses:
