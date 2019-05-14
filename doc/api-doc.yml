@@ -609,6 +609,12 @@ components:
           type: string
         gender:
           type: string
+        school:
+          type: string
+        grade:
+          type: string
+        diploma:
+          type: string
     TopicVO:
       type: object
       properties:
