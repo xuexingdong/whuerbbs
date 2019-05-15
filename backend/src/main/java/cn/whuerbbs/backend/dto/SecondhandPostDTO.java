@@ -1,11 +1,13 @@
 package cn.whuerbbs.backend.dto;
 
+import cn.whuerbbs.backend.enumeration.Board;
 import cn.whuerbbs.backend.enumeration.Campus;
 import cn.whuerbbs.backend.enumeration.TradeCategory;
 
 import javax.validation.constraints.NotNull;
 
-public class SecondhandPostDTO extends PostDTO {
+public class SecondhandPostDTO extends CommonPostDTO {
+    private final Board board = Board.SECONDHAND;
     @NotNull
     private TradeCategory tradeCategory;
     @NotNull
@@ -25,5 +27,9 @@ public class SecondhandPostDTO extends PostDTO {
 
     public void setCampus(Campus campus) {
         this.campus = campus;
+    }
+
+    public Board getBoard() {
+        return board;
     }
 }

@@ -1,19 +1,13 @@
 package cn.whuerbbs.backend.dto;
 
+import cn.whuerbbs.backend.enumeration.Board;
+
 import javax.validation.constraints.NotNull;
 
-public class AnonymousPostDTO extends PostDTO {
-    private Long topicId;
+public class AnonymousPostDTO extends CommonPostDTO {
+    private final Board board = Board.ANONYMOUS_POST;
     @NotNull
     private String anonymousName;
-
-    public Long getTopicId() {
-        return topicId;
-    }
-
-    public void setTopicId(Long topicId) {
-        this.topicId = topicId;
-    }
 
     public String getAnonymousName() {
         return anonymousName;
@@ -21,5 +15,9 @@ public class AnonymousPostDTO extends PostDTO {
 
     public void setAnonymousName(String anonymousName) {
         this.anonymousName = anonymousName;
+    }
+
+    public Board getBoard() {
+        return board;
     }
 }

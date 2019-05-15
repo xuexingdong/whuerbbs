@@ -4,6 +4,7 @@ import cn.whuerbbs.backend.dto.PostDTO;
 import cn.whuerbbs.backend.enumeration.Board;
 import cn.whuerbbs.backend.mapper.PostAttachmentMapper;
 import cn.whuerbbs.backend.mapper.PostMapper;
+import cn.whuerbbs.backend.mapper.PostTopicMapper;
 import cn.whuerbbs.backend.model.Post;
 import cn.whuerbbs.backend.model.PostAttachment;
 import cn.whuerbbs.backend.service.PostService;
@@ -17,7 +18,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.Objects;
 import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
@@ -28,12 +31,16 @@ public class PostServiceImpl implements PostService {
     private PostMapper postMapper;
 
     @Autowired
+    private PostTopicMapper postTopicMapper;
+
+    @Autowired
     private PostAttachmentMapper postAttachmentMapper;
 
     @Override
     public void create(String userId, PostDTO postDTO) {
         var post = new Post();
         post.setTitle(postDTO.getTitle());
+        post.setBoard(postDTO.getBoard());
         post.setContent(postDTO.getContent());
         post.setUserId(userId);
         post.setCreatedAt(LocalDateTime.now());
@@ -48,6 +55,9 @@ public class PostServiceImpl implements PostService {
         }).collect(Collectors.toList());
         if (!postAttachments.isEmpty()) {
             postAttachmentMapper.insertBatch(postAttachments);
+        }
+        if (Objects.nonNull(postDTO.getTopicId())) {
+            postTopicMapper.insertBatch(post.getId(), Set.of(postDTO.getTopicId()));
         }
     }
 

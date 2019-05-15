@@ -204,21 +204,14 @@ paths:
         content:
           application/json:
             schema:
-              type: object
-              properties:
-                title:
-                  type: string
-                content:
-                  type: string
-                images:
-                  type: array
-                  items:
-                    type: string
-                    maxItems: 9
-                topic_id:
-                  type: integer
-                board:
-                  type: integer
+              allOf:
+                - $ref: '#/components/schemas/PostDTO'
+                - type: object
+                  properties:
+                    topic_id:
+                      type: integer
+                    board:
+                      type: integer
       responses:
         200:
           $ref: '#/components/responses/Ok'
