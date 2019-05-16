@@ -59,12 +59,12 @@ public class CommentServiceImpl implements CommentService {
 
         // 当帖子所有者不是自己的时候，才发送通知
         if (!post.getUserId().equals(userId)) {
-            Notification notification = new Notification();
+            var notification = new Notification();
             notification.setType(NotificationType.POST_COMMENTED);
             notification.setContent(comment.getContent());
             notification.setReferenceId(String.valueOf(comment.getId()));
-            notification.setFromUserId(post.getUserId());
-            notification.setToUserId(userId);
+            notification.setFromUserId(userId);
+            notification.setToUserId(post.getUserId());
             notification.setBeRead(false);
             notification.setCreatedAt(now);
             notificationMapper.insert(notification);
