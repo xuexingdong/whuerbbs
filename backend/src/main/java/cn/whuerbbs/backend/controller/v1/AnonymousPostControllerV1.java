@@ -12,6 +12,7 @@ import cn.whuerbbs.backend.vo.AnonymousPostListVO;
 import cn.whuerbbs.backend.vo.AnonymousPostVO;
 import org.hibernate.validator.constraints.Range;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.validation.annotation.Validated;
@@ -40,6 +41,9 @@ public class AnonymousPostControllerV1 {
 
     @Autowired
     private AttitudeService attitudeService;
+
+    @Value("${static-images.default-anonymous-avatar}")
+    private String defaultAnonymousAvatarPath;
 
     @PostMapping
     public void publish(@Validated @RequestBody AnonymousPostDTO anonymousPostDTO, @CurrentUser CurrentUserData currentUserData) {
@@ -76,7 +80,11 @@ public class AnonymousPostControllerV1 {
         var attachments = attachmentService.getByPostId(post.getId());
         var topics = topicService.getTopicsByPostId(post.getId());
         var anonymousPost = anonymousPostService.getByPostId(post.getId()).orElseThrow(() -> new BusinessException("帖子不存在"));
-        var anonymousPostVO = new AnonymousPostVO(post, attachments.stream().map(attachment -> imageUtil.getFullPath(attachment.getPath())).collect(Collectors.toList()), topics, anonymousPost.getAnonymousName());
+        var anonymousPostVO = new AnonymousPostVO(post,
+                attachments.stream().map(attachment -> imageUtil.getFullPath(attachment.getPath())).collect(Collectors.toList()),
+                topics,
+                anonymousPost.getAnonymousName(),
+                defaultAnonymousAvatarPath);
         anonymousPostVO.setAttitudeStatus(attitudeService.getAttitudeStatus(currentUserData.getUserId(), AttitudeTarget.POST, String.valueOf(postId)));
         return anonymousPostVO;
     }
