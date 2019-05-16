@@ -20,3 +20,6 @@ logging:
       whuerbbs: DEBUG
 
 host: localhost
+
+static-images:
+  default-anonymous-avatar: data/default_anonymous_avatar.png
