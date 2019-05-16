@@ -6,8 +6,6 @@ public class AnonymousNameConstants {
     public static final List<String> ANONYMOUS_NAME_LIST = List.of(
             "东湖村摸鱼仔",
             "奥场小情侣",
-            "东湖村摸鱼仔",
-            "奥场小情侣",
             "桂园食堂大妈",
             "湖滨钓鱼大爷",
             "信部彭于晏",
