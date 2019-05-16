@@ -14,13 +14,13 @@
         select *
         from post_attachment
         where post_id = #{postId}
-        order by id
+        order by id desc
     </select>
     <select id="selectFirstByPostId" resultType="PostAttachment">
         select *
         from post_attachment
         where post_id = #{postId}
-        order by id
+        order by id desc
         limit 1
     </select>
 </mapper>
