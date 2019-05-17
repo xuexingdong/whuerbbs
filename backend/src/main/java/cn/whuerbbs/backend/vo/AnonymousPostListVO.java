@@ -7,12 +7,11 @@ import cn.whuerbbs.backend.model.User;
 import java.util.List;
 
 public class AnonymousPostListVO extends PostListVO {
-    public AnonymousPostListVO(Post post, String image, List<Topic> topics, String anonymousName) {
+    public AnonymousPostListVO(Post post, String image, List<Topic> topics, String anonymousName, String avatarUrl) {
         super(post, image, topics);
         User user = new User();
         user.setNickname(anonymousName);
-        // TODO 默认头像地址
-        user.setAvatarUrl("");
+        user.setAvatarUrl(avatarUrl);
         this.setCreatedBy(new UserVO(user));
     }
 }

@@ -8,15 +8,14 @@ import cn.whuerbbs.backend.enumeration.AttitudeTarget;
 import cn.whuerbbs.backend.enumeration.Board;
 import cn.whuerbbs.backend.exception.BusinessException;
 import cn.whuerbbs.backend.model.Post;
-import cn.whuerbbs.backend.service.AttachmentService;
-import cn.whuerbbs.backend.service.AttitudeService;
-import cn.whuerbbs.backend.service.PostService;
-import cn.whuerbbs.backend.service.TopicService;
+import cn.whuerbbs.backend.model.User;
+import cn.whuerbbs.backend.service.*;
 import cn.whuerbbs.backend.util.ImageUtil;
 import cn.whuerbbs.backend.vo.PostListVO;
 import cn.whuerbbs.backend.vo.PostVO;
 import org.hibernate.validator.constraints.Range;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.validation.annotation.Validated;
@@ -41,10 +40,16 @@ public class PostControllerV1 {
     private AttitudeService attitudeService;
 
     @Autowired
+    private AnonymousPostService anonymousPostService;
+
+    @Autowired
     private TopicService topicService;
 
     @Autowired
     private ImageUtil imageUtil;
+
+    @Value("${static-images.default-anonymous-avatar}")
+    private String defaultAnonymousAvatarPath;
 
     @PostMapping("posts")
     public void create(@Validated @RequestBody PostDTO postDTO, @CurrentUser CurrentUserData currentUserData) {
@@ -84,6 +89,15 @@ public class PostControllerV1 {
         return postPage.map(post -> {
             var attachmentOptional = attachmentService.getFirstByPostId(post.getId());
             var topics = topicService.getTopicsByPostId(post.getId());
+            // TODO 优化点
+            if (post.getBoard() == Board.ANONYMOUS_POST) {
+                var user = new User();
+                var anonymousPostOptional = anonymousPostService.getByPostId(post.getId());
+                var anonymousPost = anonymousPostOptional.orElseThrow(() -> new BusinessException("帖子不存在"));
+                user.setAvatarUrl(imageUtil.getFullPath(defaultAnonymousAvatarPath));
+                user.setNickname(anonymousPost.getAnonymousName());
+                post.setUser(user);
+            }
             return new PostListVO(post, attachmentOptional.map(attachment -> imageUtil.getFullPath(attachment.getPath())).orElse(null), topics);
         });
     }

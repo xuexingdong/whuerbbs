@@ -90,7 +90,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public int modifySchool(String userId, String school) {
-        User user = new User();
+        var user = new User();
         user.setId(userId);
         user.setSchool(school);
         return userMapper.update(user);
@@ -98,7 +98,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public int modifyGradeAndDiploma(String userId, String grade, String diploma) {
-        User user = new User();
+        var user = new User();
         user.setId(userId);
         user.setGrade(grade);
         user.setDiploma(diploma);

@@ -47,7 +47,7 @@ public class SecondhandPostServiceImpl implements SecondhandPostService {
         post.setLastActiveAt(now);
         postMapper.insert(post);
 
-        SecondhandPost secondhandPost = new SecondhandPost();
+        var secondhandPost = new SecondhandPost();
         secondhandPost.setPostId(post.getId());
         secondhandPost.setTradeCategory(secondHandPostDTO.getTradeCategory());
         secondhandPost.setCampus(secondHandPostDTO.getCampus());

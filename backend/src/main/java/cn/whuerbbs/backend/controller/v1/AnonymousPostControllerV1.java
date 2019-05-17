@@ -69,7 +69,10 @@ public class AnonymousPostControllerV1 {
             var attachmentOptional = attachmentService.getFirstByPostId(post.getId());
             var anonymousPost = anonymousPostService.getByPostId(post.getId()).orElseThrow(() -> new BusinessException("帖子不存在"));
             var topics = topicService.getTopicsByPostId(post.getId());
-            return new AnonymousPostListVO(post, attachmentOptional.map(attachment -> imageUtil.getFullPath(attachment.getPath())).orElse(null), topics, anonymousPost.getAnonymousName());
+            return new AnonymousPostListVO(post,
+                    attachmentOptional.map(attachment -> imageUtil.getFullPath(attachment.getPath())).orElse(null),
+                    topics, anonymousPost.getAnonymousName(),
+                    imageUtil.getFullPath(defaultAnonymousAvatarPath));
         });
     }
 
@@ -84,7 +87,7 @@ public class AnonymousPostControllerV1 {
                 attachments.stream().map(attachment -> imageUtil.getFullPath(attachment.getPath())).collect(Collectors.toList()),
                 topics,
                 anonymousPost.getAnonymousName(),
-                defaultAnonymousAvatarPath);
+                imageUtil.getFullPath(defaultAnonymousAvatarPath));
         anonymousPostVO.setAttitudeStatus(attitudeService.getAttitudeStatus(currentUserData.getUserId(), AttitudeTarget.POST, String.valueOf(postId)));
         return anonymousPostVO;
     }
