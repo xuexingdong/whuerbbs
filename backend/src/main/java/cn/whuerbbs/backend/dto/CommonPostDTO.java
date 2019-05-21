@@ -9,7 +9,7 @@ import java.util.List;
 
 public class CommonPostDTO {
     @NotEmpty
-    @Length(max = 19)
+    @Length(max = 50)
     private String title;
     private Long topicId;
     @NotNull
