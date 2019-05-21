@@ -10,7 +10,7 @@ import java.util.List;
 public interface NotificationMapper {
     List<Notification> selectByToUserIdPageable(String userId);
 
-    int setReadBefore(@Param("userId") String userId, @Param("id") long id);
+    int setAllRead(String userId);
 
     int insert(Notification notification);
 

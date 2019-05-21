@@ -32,9 +32,8 @@ public class NotificationServiceImpl implements NotificationService {
     public Page<Notification> getPageable(String userId, Pageable pageable) {
         PageHelper.startPage(pageable.getPageNumber(), pageable.getPageSize());
         var notifications = notificationMapper.selectByToUserIdPageable(userId);
-        // 设置第一条之前的为已读
-        notifications.stream().findFirst().ifPresent(notification ->
-                notificationMapper.setReadBefore(userId, notification.getId()));
+        // 设置所有消息为已读
+        notificationMapper.setAllRead(userId);
         var pageInfo = new PageInfo<>(notifications);
         return new PageImpl<>(notifications, pageable, pageInfo.getTotal());
     }

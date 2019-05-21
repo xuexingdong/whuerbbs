@@ -26,7 +26,6 @@
                  join user u on n.from_user_id = u.id
         where to_user_id = #{userId}
           and n.deleted = 0
-          and n.be_read = 0
         order by n.id desc
     </select>
     <select id="countUnreadByToUserId" resultType="long">
@@ -36,10 +35,9 @@
           and be_read = 0
           and deleted = 0
     </select>
-    <update id="setReadBefore">
+    <update id="setAllRead">
         update notification
         set be_read = 1
         where to_user_id = #{userId}
-          and id &lt;= #{id}
     </update>
 </mapper>
