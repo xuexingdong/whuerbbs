@@ -44,20 +44,7 @@ paths:
           content:
             application/json:
               schema:
-                type: object
-                properties:
-                  id:
-                    type: integer
-                  content:
-                    type: string
-                  like_count:
-                    type: integer
-                  created_at:
-                    type: date-time
-                  created_by:
-                    $ref: '#/components/schemas/UserVO'
-                  attitude_status:
-                    $ref: '#/components/schemas/AttitudeStatus'
+                $ref: '#/components/schemas/CommentListVO'
     post:
       summary: 提交评论
       requestBody:
@@ -67,20 +54,82 @@ paths:
               type: object
               properties:
                 post_id:
-                  type: string
+                  type: integer
                 content:
                   type: string
                   maxLength: 300
+                parent_id:
+                  type: integer
+              required:
+                - post_id
+                - content
       responses:
         200:
           $ref: '#/components/responses/Ok'
+  /hot_comments:
+    get:
+      summary: 获取热门评论
+      parameters:
+        - in: query
+          name: post_id
+          required: true
+          schema:
+            type: integer
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CommentListVO'
+  /comments/{comment_id}:
+    get:
+      summary: 获取评论详情
+      parameters:
+        - in: path
+          name: comment_id
+          required: true
+          schema:
+            type: integer
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CommentListVO'
+    delete:
+      summary: 删除评论
+      parameters:
+        - in: path
+          name: comment_id
+          required: true
+          schema:
+            type: integer
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/responses/Ok'
 
-  /comments/{commentId}/like:
+  /post_collections:
+    get:
+      summary: 获取收藏列表
+      responses:
+        200:
+          description: ok
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PostListVO'
+  /comments/{comment_id}/like:
     post:
       summary: 点赞评论
       parameters:
         - in: path
-          name: commentId
+          name: comment_id
           required: true
           schema:
             type: integer
@@ -88,12 +137,12 @@ paths:
         200:
           $ref: '#/components/responses/Ok'
 
-  /comments/{commentId}/cancel_like:
+  /comments/{comment_id}/cancel_like:
     post:
       summary: 取消评论点赞
       parameters:
         - in: path
-          name: commentId
+          name: comment_id
           required: true
           schema:
             type: integer
@@ -167,7 +216,8 @@ paths:
                   from_user:
                     $ref: '#/components/schemas/UserVO'
                   created_at:
-                    type: date-time
+                    type: string
+                    format: 'date-time'
   /posts:
     get:
       summary: 获取全部帖子（全部、问点事、一起玩共用）
@@ -215,12 +265,12 @@ paths:
       responses:
         200:
           $ref: '#/components/responses/Ok'
-  /posts/{postId}:
+  /posts/{post_id}:
     get:
       summary: 获取帖子详情
       parameters:
         - in: path
-          name: postId
+          name: post_id
           required: true
           schema:
             type: integer
@@ -231,24 +281,48 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/PostVO'
-  /posts/{postId}/like:
+  /posts/{post_id}/like:
     post:
       summary: 点赞帖子
       parameters:
         - in: path
-          name: postId
+          name: post_id
           required: true
           schema:
             type: integer
       responses:
         200:
           $ref: '#/components/responses/Ok'
-  /posts/{postId}/cancel_like:
+  /posts/{post_id}/cancel_like:
     post:
       summary: 取消帖子点赞
       parameters:
         - in: path
-          name: postId
+          name: post_id
+          required: true
+          schema:
+            type: integer
+      responses:
+        200:
+          $ref: '#/components/responses/Ok'
+  /posts/{post_id}/collect:
+    post:
+      summary: 收藏帖子
+      parameters:
+        - in: path
+          name: post_id
+          required: true
+          schema:
+            type: integer
+      responses:
+        200:
+          $ref: '#/components/responses/Ok'
+  /posts/{post_id}/cancel_collect:
+    post:
+      summary: 取消收藏帖子
+      parameters:
+        - in: path
+          name: post_id
           required: true
           schema:
             type: integer
@@ -289,12 +363,12 @@ paths:
       responses:
         200:
           $ref: '#/components/responses/Ok'
-  /secondhand_posts/{secondhandPostId}:
+  /secondhand_posts/{secondhand_post_id}:
     get:
       summary: 获取二手交易帖子详情
       parameters:
         - in: path
-          name: secondhandPostId
+          name: secondhand_post_id
           required: true
           schema:
             type: integer
@@ -339,12 +413,12 @@ paths:
       responses:
         200:
           $ref: '#/components/responses/Ok'
-  /anonymous_posts/{anonymousPostId}:
+  /anonymous_posts/{anonymous_post_id}:
     get:
       summary: 获取匿名帖子详情
       parameters:
         - in: path
-          name: anonymousPostId
+          name: anonymous_post_id
           required: true
           schema:
             type: integer
@@ -360,7 +434,6 @@ paths:
                     properties:
                       anonymous_name:
                         type: string
-
   /topics:
     get:
       summary: 话题查询
@@ -377,12 +450,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/TopicVO'
-  /topics/{topicId}:
+  /topics/{topic_id}:
     get:
       summary: 话题查询
       parameters:
         - in: path
-          name: topicId
+          name: topic_id
           required: true
           schema:
             type: integer
@@ -408,17 +481,9 @@ paths:
                       discussion_amout:
                         type: integer
                         description: 讨论量
-
-
   /user:
     get:
       summary: 查看个人信息
-      parameters:
-        - in: path
-          name: postId
-          required: true
-          schema:
-            type: integer
       responses:
         200:
           description: ok
@@ -426,18 +491,17 @@ paths:
             application/json:
               schema:
                 allOf:
-                  - $ref: '#/components/schemas/UserVO'
+                  - $ref: '#/components/schemas/UserDetailVO'
                   - type: object
                     properties:
                       notification_count:
                         type: integer
-
-  /users/{userId}:
+  /users/{user_id}:
     get:
       summary: 查看他人信息
       parameters:
         - in: path
-          name: userId
+          name: user_id
           required: true
           schema:
             type: integer
@@ -447,7 +511,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/UserVO'
+                $ref: '#/components/schemas/UserDetailVO'
   /user/school:
     put:
       summary: 修改学院信息
@@ -609,12 +673,13 @@ components:
          * `2` - 女
     NotificationType:
       type: integer
-      enum: [1, 2, 3]
+      enum: [1, 2, 3, 4]
       description: >
         Sort order:
          * `1` - 帖子被评论
          * `2` - 帖子被点赞
          * `3` - 评论被点赞
+         * `4` - 评论被回复
     UserVO:
       type: object
       properties:
@@ -624,14 +689,19 @@ components:
           type: string
         avatar_url:
           type: string
-        gender:
-          type: string
-        school:
-          type: string
-        grade:
-          type: string
-        diploma:
-          type: string
+    UserDetailVO:
+      allOf:
+        - $ref: '#/components/schemas/UserVO'
+        - type: object
+          properties:
+            gender:
+              type: string
+            school:
+              type: string
+            grade:
+              type: string
+            diploma:
+              type: string
     TopicVO:
       type: object
       properties:
@@ -668,9 +738,11 @@ components:
         comment_count:
           type: integer
         created_at:
-          type: date-time
+          type: string
+          format: 'date-time'
         last_active_at:
-          type: date-time
+          type: string
+          format: 'date-time'
         created_by:
           $ref: '#/components/schemas/UserVO'
         topics:
@@ -706,6 +778,34 @@ components:
             $ref: '#/components/schemas/TopicVO'
         hot:
           type: boolean
+        collected:
+          type: boolean
+    CommentListVO:
+      allOf:
+        - $ref: '#/components/schemas/CommentVO'
+        - properties:
+            sub_comments:
+              type: array
+              items:
+                $ref: '#/components/schemas/CommentVO'
+            sub_comment_count:
+              type: integer
+    CommentVO:
+      type: object
+      properties:
+        id:
+          type: integer
+        content:
+          type: string
+        like_count:
+          type: integer
+        created_at:
+          type: string
+          format: 'date-time'
+        created_by:
+          $ref: '#/components/schemas/UserVO'
+        attitude_status:
+          $ref: '#/components/schemas/AttitudeStatus'
     TradeCategory:
       type: integer
       enum: [1, 2, 3, 4, 5]
