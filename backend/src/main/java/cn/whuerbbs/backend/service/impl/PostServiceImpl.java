@@ -2,15 +2,23 @@ package cn.whuerbbs.backend.service.impl;
 
 import cn.whuerbbs.backend.dto.PostDTO;
 import cn.whuerbbs.backend.enumeration.Board;
+import cn.whuerbbs.backend.exception.BusinessException;
+import cn.whuerbbs.backend.mapper.AnonymousPostMapper;
 import cn.whuerbbs.backend.mapper.PostAttachmentMapper;
 import cn.whuerbbs.backend.mapper.PostMapper;
 import cn.whuerbbs.backend.mapper.PostTopicMapper;
 import cn.whuerbbs.backend.model.Post;
 import cn.whuerbbs.backend.model.PostAttachment;
+import cn.whuerbbs.backend.model.User;
+import cn.whuerbbs.backend.service.AttachmentService;
 import cn.whuerbbs.backend.service.PostService;
+import cn.whuerbbs.backend.service.TopicService;
+import cn.whuerbbs.backend.util.ImageUtil;
+import cn.whuerbbs.backend.vo.PostListVO;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
@@ -18,6 +26,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
@@ -28,6 +37,12 @@ import java.util.stream.Collectors;
 public class PostServiceImpl implements PostService {
 
     @Autowired
+    private AttachmentService attachmentService;
+
+    @Autowired
+    private TopicService topicService;
+
+    @Autowired
     private PostMapper postMapper;
 
     @Autowired
@@ -35,6 +50,16 @@ public class PostServiceImpl implements PostService {
 
     @Autowired
     private PostAttachmentMapper postAttachmentMapper;
+
+    @Autowired
+    private AnonymousPostMapper anonymousPostMapper;
+
+    @Autowired
+    private ImageUtil imageUtil;
+
+    @Value("${static-images.default-anonymous-avatar}")
+    private String defaultAnonymousAvatarPath;
+
 
     @Override
     public void create(String userId, PostDTO postDTO) {
@@ -57,7 +82,12 @@ public class PostServiceImpl implements PostService {
             postAttachmentMapper.insertBatch(postAttachments);
         }
         if (Objects.nonNull(postDTO.getTopicId())) {
-            postTopicMapper.insertBatch(post.getId(), Set.of(postDTO.getTopicId()));
+            var topicIds = Set.of(postDTO.getTopicId());
+            if (topicService.isValidTopic(post.getBoard(), topicIds)) {
+                postTopicMapper.insertBatch(post.getId(), topicIds);
+            } else {
+                throw new BusinessException("非法主题");
+            }
         }
     }
 
@@ -90,5 +120,35 @@ public class PostServiceImpl implements PostService {
         var posts = postMapper.selectHotPostIdsByTopicId(topicId);
         var pageInfo = new PageInfo<>(posts);
         return new PageImpl<>(posts, pageable, pageInfo.getTotal());
+    }
+
+    @Override
+    public PostListVO getPostListVO(Post post) {
+        var attachmentOptional = attachmentService.getFirstByPostId(post.getId());
+        var topics = topicService.getTopicsByPostId(post.getId());
+        // TODO 优化点
+        if (post.getBoard() == Board.ANONYMOUS_POST) {
+            post = addAnonymousInfo(post);
+        }
+        return new PostListVO(post, attachmentOptional.map(attachment -> imageUtil.getFullPath(attachment.getPath())).orElse(null), topics);
+    }
+
+    @Override
+    public List<PostListVO> getPostListVO(List<Long> postIds) {
+        if (postIds.isEmpty()) {
+            return List.of();
+        }
+        return postMapper.selectByIds(postIds).stream().map(this::getPostListVO).collect(Collectors.toList());
+    }
+
+    @Override
+    public Post addAnonymousInfo(Post post) {
+        var user = new User();
+        var anonymousPostOptional = anonymousPostMapper.selectByPostId(post.getId());
+        var anonymousPost = anonymousPostOptional.orElseThrow(() -> new BusinessException("帖子不存在"));
+        user.setAvatarUrl(imageUtil.getFullPath(defaultAnonymousAvatarPath));
+        user.setNickname(anonymousPost.getAnonymousName());
+        post.setUser(user);
+        return post;
     }
 }

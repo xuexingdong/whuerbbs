@@ -18,4 +18,12 @@ public interface CommentMapper {
     Optional<Comment> selectById(long id);
 
     int updateLikeCount(@Param("id") long id, @Param("likeCount") int likeCount);
+
+    List<Comment> selectHotComments(@Param("postId") long postId, @Param("n") int n);
+
+    List<Comment> selectByParentId(long parentCommentId);
+
+    int deleteById(long id);
+
+    int deleteByParentId(long parentCommentId);
 }

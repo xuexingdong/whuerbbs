@@ -5,7 +5,8 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 public enum NotificationType implements BaseEnum {
     POST_COMMENTED(1),
     POST_LIKED(2),
-    COMMENT_LIKED(3);
+    COMMENT_LIKED(3),
+    COMMENT_REPLIED(4);
 
     private final int type;
 

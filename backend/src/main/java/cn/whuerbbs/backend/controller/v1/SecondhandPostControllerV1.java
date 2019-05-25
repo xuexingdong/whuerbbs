@@ -17,10 +17,12 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.constraints.NotNull;
 import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("secondhand_posts")
+@Validated
 public class SecondhandPostControllerV1 {
 
     @Autowired
@@ -62,8 +64,8 @@ public class SecondhandPostControllerV1 {
      */
     @GetMapping
     public Page<SecondhandPostListVO> getAllSecondhandPosts(
-            @Validated @Range(min = 1, max = Integer.MAX_VALUE) @RequestParam(defaultValue = "1") int page,
-            @Validated @Range(min = 1, max = 100) @RequestParam(value = "per_page", defaultValue = "10") int perPage,
+            @Range(min = 1, max = Integer.MAX_VALUE) @RequestParam(defaultValue = "1") int page,
+            @Range(min = 1, max = 100) @RequestParam(value = "per_page", defaultValue = "10") int perPage,
             @CurrentUser CurrentUserData currentUserData) {
         var pageRequest = PageRequest.of(page, perPage);
         var postPage = postService.getPageableByBoard(pageRequest, Board.SECONDHAND);
@@ -76,7 +78,7 @@ public class SecondhandPostControllerV1 {
     }
 
     @GetMapping("{postId}")
-    public SecondhandPostVO getSecondhandPostDetail(@PathVariable long postId, @CurrentUser CurrentUserData currentUserData) {
+    public SecondhandPostVO getSecondhandPostDetail(@NotNull @PathVariable Long postId, @CurrentUser CurrentUserData currentUserData) {
         var postOptional = postService.getById(postId);
         var post = postOptional.orElseThrow(() -> new BusinessException("帖子不存在"));
         var attachments = attachmentService.getByPostId(post.getId());

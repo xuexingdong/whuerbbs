@@ -7,9 +7,11 @@ public class Comment extends BaseModel implements Identifiable<Long> {
     private Long id;
     private String content;
     private long likeCount;
+    private long parentId;
     private long postId;
     private String userId;
 
+    private long subCommentCount;
     private User user;
 
     @Override
@@ -37,6 +39,14 @@ public class Comment extends BaseModel implements Identifiable<Long> {
         this.likeCount = likeCount;
     }
 
+    public long getParentId() {
+        return parentId;
+    }
+
+    public void setParentId(long parentId) {
+        this.parentId = parentId;
+    }
+
     public long getPostId() {
         return postId;
     }
@@ -51,6 +61,10 @@ public class Comment extends BaseModel implements Identifiable<Long> {
 
     public void setUserId(String userId) {
         this.userId = userId;
+    }
+
+    public long getSubCommentCount() {
+        return subCommentCount;
     }
 
     public User getUser() {

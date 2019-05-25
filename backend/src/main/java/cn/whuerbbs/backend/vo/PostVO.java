@@ -23,12 +23,15 @@ public class PostVO {
     private List<TopicVO> topics;
     // 是否热门帖子
     private boolean hot;
+    // 是否已收藏
+    private boolean collected;
 
     public PostVO(Post post, List<String> images, List<Topic> topics) {
         BeanUtils.copyProperties(post, this);
         this.createdBy = new UserVO(post.getUser());
         this.images = images;
         this.topics = topics.stream().map(TopicVO::new).collect(Collectors.toList());
+        // TODO 公式抽取
         this.hot = this.likeCount + this.commentCount * 3 > 50;
     }
 
@@ -126,5 +129,13 @@ public class PostVO {
 
     public void setHot(boolean hot) {
         this.hot = hot;
+    }
+
+    public boolean isCollected() {
+        return collected;
+    }
+
+    public void setCollected(boolean collected) {
+        this.collected = collected;
     }
 }

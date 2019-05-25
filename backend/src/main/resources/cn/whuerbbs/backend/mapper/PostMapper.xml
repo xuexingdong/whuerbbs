@@ -45,7 +45,7 @@
         u.avatar_url,
         u.gender
         from post p
-        left join user u on p.user_id = u.id
+        join user u on p.user_id = u.id
         <where>
             <if test="title != null and title != ''">
                 p.title like #{title}
@@ -75,7 +75,7 @@
               from post
               where id = #{id}
                 and deleted = 0) p
-                 left join user u on p.user_id = u.id
+                 join user u on p.user_id = u.id
         order by p.last_active_at desc
     </select>
     <select id="selectByIds" resultMap="postResult">
@@ -99,7 +99,7 @@
             #{item}
         </foreach>
         and deleted = 0) p
-        left join user u on p.user_id = u.id
+        join user u on p.user_id = u.id
     </select>
     <select id="selectPostIdsByTopicId" resultMap="postResult">
         select p.id pid,

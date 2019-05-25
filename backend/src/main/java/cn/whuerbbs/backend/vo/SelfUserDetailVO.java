@@ -2,10 +2,10 @@ package cn.whuerbbs.backend.vo;
 
 import cn.whuerbbs.backend.model.User;
 
-public class SelfUserVO extends UserVO {
+public class SelfUserDetailVO extends UserDetailVO {
     private long notificationCount;
 
-    public SelfUserVO(User user, long notificationCount) {
+    public SelfUserDetailVO(User user, long notificationCount) {
         super(user);
         this.notificationCount = notificationCount;
     }

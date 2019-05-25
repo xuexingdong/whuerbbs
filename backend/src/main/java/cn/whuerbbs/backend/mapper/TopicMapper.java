@@ -12,7 +12,7 @@ import java.util.Set;
 
 @Mapper
 public interface TopicMapper {
-    List<Topic> selectByBoard(Board board);
+    List<Topic> selectByBoard(@Param("board") Board board);
 
     List<Topic> selectByIds(List<Long> topicIds);
 

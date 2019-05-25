@@ -2,12 +2,14 @@ package cn.whuerbbs.backend.service.impl;
 
 import cn.whuerbbs.backend.dto.AnonymousPostDTO;
 import cn.whuerbbs.backend.enumeration.Board;
+import cn.whuerbbs.backend.exception.BusinessException;
 import cn.whuerbbs.backend.mapper.AnonymousPostMapper;
 import cn.whuerbbs.backend.mapper.PostMapper;
 import cn.whuerbbs.backend.mapper.PostTopicMapper;
 import cn.whuerbbs.backend.model.AnonymousPost;
 import cn.whuerbbs.backend.model.Post;
 import cn.whuerbbs.backend.service.AnonymousPostService;
+import cn.whuerbbs.backend.service.TopicService;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -24,6 +26,9 @@ public class AnonymousPostServiceImpl implements AnonymousPostService {
 
     @Autowired
     private PostMapper postMapper;
+
+    @Autowired
+    private TopicService topicService;
 
     @Autowired
     private PostTopicMapper postTopicMapper;
@@ -48,7 +53,12 @@ public class AnonymousPostServiceImpl implements AnonymousPostService {
         anonymousPostMapper.insert(anonymousPost);
 
         if (Objects.nonNull(anonymousPostDTO.getTopicId())) {
-            postTopicMapper.insertBatch(post.getId(), Set.of(anonymousPostDTO.getTopicId()));
+            var topicIds = Set.of(anonymousPostDTO.getTopicId());
+            if (topicService.isValidTopic(Board.ANONYMOUS_POST, topicIds)) {
+                postTopicMapper.insertBatch(post.getId(), topicIds);
+            } else {
+                throw new BusinessException("非法主题");
+            }
         }
     }
 

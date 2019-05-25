@@ -2,7 +2,6 @@ package cn.whuerbbs.backend.mapper;
 
 import cn.whuerbbs.backend.model.Notification;
 import org.apache.ibatis.annotations.Mapper;
-import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 
@@ -10,7 +9,7 @@ import java.util.List;
 public interface NotificationMapper {
     List<Notification> selectByToUserIdPageable(String userId);
 
-    int setReadBefore(@Param("userId") String userId, @Param("id") long id);
+    int setAllRead(String userId);
 
     int insert(Notification notification);
 

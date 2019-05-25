@@ -1,6 +1,5 @@
 package cn.whuerbbs.backend.vo;
 
-import cn.whuerbbs.backend.enumeration.Gender;
 import cn.whuerbbs.backend.model.User;
 import org.springframework.beans.BeanUtils;
 
@@ -8,10 +7,6 @@ public class UserVO {
     private String id;
     private String nickname;
     private String avatarUrl;
-    private Gender gender;
-    private String school;
-    private String grade;
-    private String diploma;
 
     public UserVO(User user) {
         BeanUtils.copyProperties(user, this);
@@ -40,37 +35,5 @@ public class UserVO {
 
     public void setAvatarUrl(String avatarUrl) {
         this.avatarUrl = avatarUrl;
-    }
-
-    public Gender getGender() {
-        return gender;
-    }
-
-    public void setGender(Gender gender) {
-        this.gender = gender;
-    }
-
-    public String getSchool() {
-        return school;
-    }
-
-    public void setSchool(String school) {
-        this.school = school;
-    }
-
-    public String getGrade() {
-        return grade;
-    }
-
-    public void setGrade(String grade) {
-        this.grade = grade;
-    }
-
-    public String getDiploma() {
-        return diploma;
-    }
-
-    public void setDiploma(String diploma) {
-        this.diploma = diploma;
     }
 }
