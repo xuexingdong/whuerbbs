@@ -8,7 +8,6 @@ import cn.whuerbbs.backend.enumeration.AttitudeTarget;
 import cn.whuerbbs.backend.enumeration.Board;
 import cn.whuerbbs.backend.exception.BusinessException;
 import cn.whuerbbs.backend.model.Post;
-import cn.whuerbbs.backend.model.User;
 import cn.whuerbbs.backend.service.*;
 import cn.whuerbbs.backend.util.ImageUtil;
 import cn.whuerbbs.backend.vo.PostListVO;
@@ -40,19 +39,23 @@ public class PostControllerV1 {
     private AttitudeService attitudeService;
 
     @Autowired
-    private AnonymousPostService anonymousPostService;
-
-    @Autowired
     private TopicService topicService;
 
     @Autowired
     private ImageUtil imageUtil;
+
+    @Autowired
+    private PostCollectionService postCollectionService;
 
     @Value("${static-images.default-anonymous-avatar}")
     private String defaultAnonymousAvatarPath;
 
     @PostMapping("posts")
     public void create(@Validated @RequestBody PostDTO postDTO, @CurrentUser CurrentUserData currentUserData) {
+        // 特殊逻辑，走此接口不允许是二手区和匿名
+        if (postDTO.getBoard() == Board.ANONYMOUS_POST || postDTO.getBoard() == Board.SECONDHAND) {
+            throw new BusinessException("参数错误");
+        }
         postService.create(currentUserData.getUserId(), postDTO);
     }
 
@@ -68,11 +71,11 @@ public class PostControllerV1 {
      */
     @GetMapping("posts")
     public Page<PostListVO> getPosts(
-            @Validated @RequestParam(required = false) Board board,
-            @Validated @RequestParam(value = "topic_id", required = false) Integer topicId,
-            @Validated @RequestParam(value = "hot", required = false) boolean hot,
-            @Validated @Range(min = 1, max = Integer.MAX_VALUE) @RequestParam(defaultValue = "1") int page,
-            @Validated @Range(min = 1, max = 100) @RequestParam(value = "per_page", defaultValue = "10") int perPage,
+            @RequestParam(required = false) Board board,
+            @RequestParam(value = "topic_id", required = false) Integer topicId,
+            @RequestParam(value = "hot", required = false) boolean hot,
+            @Range(min = 1, max = Integer.MAX_VALUE) @RequestParam(defaultValue = "1") int page,
+            @Range(min = 1, max = 100) @RequestParam(value = "per_page", defaultValue = "10") int perPage,
             @CurrentUser CurrentUserData currentUserData) {
         var pageRequest = PageRequest.of(page, perPage);
         Page<Post> postPage;
@@ -86,49 +89,50 @@ public class PostControllerV1 {
         } else {
             postPage = postService.getPageableByBoard(pageRequest, board);
         }
-        return postPage.map(post -> {
-            var attachmentOptional = attachmentService.getFirstByPostId(post.getId());
-            var topics = topicService.getTopicsByPostId(post.getId());
-            // TODO 优化点
-            if (post.getBoard() == Board.ANONYMOUS_POST) {
-                var user = new User();
-                var anonymousPostOptional = anonymousPostService.getByPostId(post.getId());
-                var anonymousPost = anonymousPostOptional.orElseThrow(() -> new BusinessException("帖子不存在"));
-                user.setAvatarUrl(imageUtil.getFullPath(defaultAnonymousAvatarPath));
-                user.setNickname(anonymousPost.getAnonymousName());
-                post.setUser(user);
-            }
-            return new PostListVO(post, attachmentOptional.map(attachment -> imageUtil.getFullPath(attachment.getPath())).orElse(null), topics);
-        });
+        return postPage.map(postService::getPostListVO);
     }
 
     @GetMapping("posts/{postId}")
-    public PostVO getPostDetail(@NotNull @PathVariable long postId, @CurrentUser CurrentUserData currentUserData) {
+    public PostVO getPostDetail(@NotNull @PathVariable Long postId, @CurrentUser CurrentUserData currentUserData) {
         var postOptional = postService.getById(postId);
         var post = postOptional.orElseThrow(() -> new BusinessException("帖子不存在"));
         var attachments = attachmentService.getByPostId(post.getId());
         var topics = topicService.getTopicsByPostId(post.getId());
-        // TODO 优化点
-        if (post.getBoard() == Board.ANONYMOUS_POST) {
-            var user = new User();
-            var anonymousPostOptional = anonymousPostService.getByPostId(post.getId());
-            var anonymousPost = anonymousPostOptional.orElseThrow(() -> new BusinessException("帖子不存在"));
-            user.setAvatarUrl(imageUtil.getFullPath(defaultAnonymousAvatarPath));
-            user.setNickname(anonymousPost.getAnonymousName());
-            post.setUser(user);
-        }
+        post = postService.addAnonymousInfo(post);
         var postVO = new PostVO(post, attachments.stream().map(attachment -> imageUtil.getFullPath(attachment.getPath())).collect(Collectors.toList()), topics);
         postVO.setAttitudeStatus(attitudeService.getAttitudeStatus(currentUserData.getUserId(), AttitudeTarget.POST, String.valueOf(postId)));
         return postVO;
     }
 
     @GetMapping("posts/{postId}/like")
-    public void like(@PathVariable long postId, @CurrentUser CurrentUserData currentUserData) {
+    public void like(@NotNull @PathVariable Long postId, @CurrentUser CurrentUserData currentUserData) {
         attitudeService.add(currentUserData.getUserId(), AttitudeTarget.POST, String.valueOf(postId), AttitudeStatus.LIKE);
     }
 
     @GetMapping("posts/{postId}/cancel_like")
-    public void cancelLike(@PathVariable long postId, @CurrentUser CurrentUserData currentUserData) {
+    public void cancelLike(@NotNull @PathVariable Long postId, @CurrentUser CurrentUserData currentUserData) {
         attitudeService.delete(currentUserData.getUserId(), AttitudeTarget.POST, String.valueOf(postId));
+    }
+
+    /**
+     * 收藏帖子
+     *
+     * @param postId
+     * @param currentUserData
+     */
+    @PutMapping("posts/{postId}/collect")
+    public void collect(@NotNull @PathVariable Long postId, @CurrentUser CurrentUserData currentUserData) {
+        postCollectionService.collect(currentUserData.getUserId(), postId);
+    }
+
+    /**
+     * 取消收藏帖子
+     *
+     * @param postId
+     * @param currentUserData
+     */
+    @PutMapping("posts/{postId}/cancel_collect")
+    public void cancelCollect(@NotNull @PathVariable Long postId, @CurrentUser CurrentUserData currentUserData) {
+        postCollectionService.cancelCollect(currentUserData.getUserId(), postId);
     }
 }
