@@ -2,7 +2,6 @@ package cn.whuerbbs.backend.mapper;
 
 import cn.whuerbbs.backend.model.Notification;
 import org.apache.ibatis.annotations.Mapper;
-import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 

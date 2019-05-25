@@ -16,6 +16,7 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.validation.constraints.NotNull;
 
 @RestController
+@Validated
 public class AttachmentControllerV1 {
 
     @Autowired
@@ -25,7 +26,7 @@ public class AttachmentControllerV1 {
     private ImageUtil imageUtil;
 
     @PostMapping("upload")
-    public AttachmentVO upload(@Validated @NotNull @RequestParam MultipartFile file, @CurrentUser CurrentUserData currentUserData) {
+    public AttachmentVO upload(@NotNull @RequestParam MultipartFile file, @CurrentUser CurrentUserData currentUserData) {
         if (file.isEmpty()) {
             throw new BusinessException("文件内容为空");
         }

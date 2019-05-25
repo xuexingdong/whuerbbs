@@ -27,6 +27,5 @@
         select *
         from user
         where id = #{id}
-          and deleted = 0
     </select>
 </mapper>

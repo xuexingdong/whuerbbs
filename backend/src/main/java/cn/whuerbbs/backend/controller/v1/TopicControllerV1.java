@@ -30,7 +30,7 @@ public class TopicControllerV1 {
     private ImageUtil imageUtil;
 
     @GetMapping
-    public List<TopicVO> getTopicsByBoard(@Validated @NotNull @RequestParam Board board) {
+    public List<TopicVO> getTopicsByBoard(@NotNull @RequestParam Board board) {
         return topicService.getTopicsByBoard(board).stream().map(TopicVO::new).collect(Collectors.toList());
     }
 

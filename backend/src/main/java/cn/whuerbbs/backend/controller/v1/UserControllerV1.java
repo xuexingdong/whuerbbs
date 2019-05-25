@@ -8,13 +8,16 @@ import cn.whuerbbs.backend.dto.ModifySchoolDTO;
 import cn.whuerbbs.backend.exception.BusinessException;
 import cn.whuerbbs.backend.service.NotificationService;
 import cn.whuerbbs.backend.service.UserService;
-import cn.whuerbbs.backend.vo.SelfUserVO;
-import cn.whuerbbs.backend.vo.UserVO;
+import cn.whuerbbs.backend.vo.SelfUserDetailVO;
+import cn.whuerbbs.backend.vo.UserDetailVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.constraints.NotNull;
+
 @RestController
+@Validated
 public class UserControllerV1 {
 
     @Autowired
@@ -24,11 +27,11 @@ public class UserControllerV1 {
     private NotificationService notificationService;
 
     @GetMapping("/user")
-    public SelfUserVO getSelfProfile(@CurrentUser CurrentUserData currentUserData) {
+    public SelfUserDetailVO getSelfProfile(@CurrentUser CurrentUserData currentUserData) {
         var userOptional = userService.getById(currentUserData.getUserId());
         var user = userOptional.orElseThrow(() -> new BusinessException("用户不存在"));
         long unreadCount = notificationService.countUnreadByUserId(user.getId());
-        return new SelfUserVO(user, unreadCount);
+        return new SelfUserDetailVO(user, unreadCount);
     }
 
     @PutMapping("/user/school")
@@ -51,9 +54,9 @@ public class UserControllerV1 {
     }
 
     @GetMapping("/users/{userId}")
-    public UserVO getUserProfile(@PathVariable String userId, @CurrentUser CurrentUserData currentUserData) {
+    public UserDetailVO getUserProfile(@NotNull @PathVariable String userId, @CurrentUser CurrentUserData currentUserData) {
         var userOptional = userService.getById(userId);
         var user = userOptional.orElseThrow(() -> new BusinessException("用户不存在"));
-        return new UserVO(user);
+        return new UserDetailVO(user);
     }
 }

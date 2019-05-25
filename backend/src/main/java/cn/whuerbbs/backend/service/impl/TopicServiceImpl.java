@@ -12,6 +12,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional(rollbackFor = Exception.class)
@@ -47,5 +49,10 @@ public class TopicServiceImpl implements TopicService {
     public Pair<Long, Long> getStatistics(int topicId) {
         var resultMap = topicMapper.getParticipateUserCountAndDiscussionMountById(topicId);
         return Pair.of(Long.parseLong(String.valueOf(resultMap.get("count1"))), Long.parseLong(String.valueOf(resultMap.get("count2"))));
+    }
+
+    @Override
+    public boolean isValidTopic(Board board, Set<Long> topicIds) {
+        return topicMapper.selectByBoard(board).stream().map(Topic::getId).collect(Collectors.toSet()).containsAll(topicIds);
     }
 }

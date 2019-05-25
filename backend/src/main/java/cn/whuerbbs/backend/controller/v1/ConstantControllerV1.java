@@ -4,6 +4,7 @@ import cn.whuerbbs.backend.common.AnonymousNameConstants;
 import cn.whuerbbs.backend.common.SchoolConstants;
 import cn.whuerbbs.backend.enumeration.Campus;
 import cn.whuerbbs.backend.enumeration.TradeCategory;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -12,6 +13,7 @@ import java.util.List;
 import java.util.Map;
 
 @RestController
+@Validated
 public class ConstantControllerV1 {
 
     @GetMapping("schools")

@@ -10,15 +10,6 @@
           and active = 1
           and deleted = 0
     </select>
-    <select id="selectByPostId" resultType="Topic">
-        select *
-        from topic t
-                 join post_topic pt
-        where t.id = pt.topic_id
-          and t.active = 1
-          and t.deleted = 0
-          and pt.post_id = #{postId}
-    </select>
     <select id="selectByIds" resultType="Topic">
         select *
         from topic where id in
