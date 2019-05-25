@@ -98,7 +98,10 @@ public class PostControllerV1 {
         var post = postOptional.orElseThrow(() -> new BusinessException("帖子不存在"));
         var attachments = attachmentService.getByPostId(post.getId());
         var topics = topicService.getTopicsByPostId(post.getId());
-        post = postService.addAnonymousInfo(post);
+        // 匿名帖子要特殊处理
+        if (post.getBoard() == Board.ANONYMOUS_POST) {
+            post = postService.addAnonymousInfo(post);
+        }
         var postVO = new PostVO(post, attachments.stream().map(attachment -> imageUtil.getFullPath(attachment.getPath())).collect(Collectors.toList()), topics);
         postVO.setAttitudeStatus(attitudeService.getAttitudeStatus(currentUserData.getUserId(), AttitudeTarget.POST, String.valueOf(postId)));
         return postVO;
