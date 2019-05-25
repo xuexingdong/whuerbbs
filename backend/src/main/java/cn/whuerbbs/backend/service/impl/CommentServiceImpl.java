@@ -19,6 +19,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Service
 @Transactional(rollbackFor = Exception.class)
@@ -42,33 +43,84 @@ public class CommentServiceImpl implements CommentService {
     }
 
     @Override
-    public Comment commentPost(String userId, CommentDTO commentDTO) {
+    public void commentPost(String userId, CommentDTO commentDTO) {
         var now = LocalDateTime.now();
+        var postOptional = postMapper.selectById(commentDTO.getPostId());
+        var post = postOptional.orElseThrow(() -> new BusinessException("帖子不存在"));
+        // 评论数
+        postMapper.updateCommentCount(commentDTO.getPostId(), 1);
+        // 帖子活跃时间
+        postMapper.updateLastActiveTime(commentDTO.getPostId(), now);
+
+        NotificationType notificationType;
+        String toUserId;
+        // 一级评论
+        if (commentDTO.getParentId() == 0) {
+            notificationType = NotificationType.POST_COMMENTED;
+            toUserId = post.getUserId();
+        }
+        // 二级评论评论，postId以子评论为主，忽略传入参数的postId
+        else {
+            var parentCommentOptional = commentMapper.selectById(commentDTO.getParentId());
+            var parentComment = parentCommentOptional.orElseThrow(() -> new BusinessException("父评论不存在"));
+            commentDTO.setPostId(parentComment.getPostId());
+            notificationType = NotificationType.COMMENT_REPLIED;
+            toUserId = parentComment.getUserId();
+        }
         var comment = new Comment();
         comment.setPostId(commentDTO.getPostId());
         comment.setContent(commentDTO.getContent());
+        comment.setParentId(commentDTO.getParentId());
         comment.setUserId(userId);
         comment.setCreatedAt(now);
         commentMapper.insert(comment);
 
-        var postOptional = postMapper.selectById(comment.getPostId());
-        var post = postOptional.orElseThrow(() -> new BusinessException("帖子不存在"));
-        postMapper.updateCommentCount(comment.getPostId(), 1);
-        // 帖子活跃时间
-        postMapper.updateLastActiveTime(comment.getPostId(), now);
-
+        // 通知的发起者永远是唤起接口的人
         // 当帖子所有者不是自己的时候，才发送通知
-        if (!post.getUserId().equals(userId)) {
+        if (!userId.equals(toUserId)) {
             var notification = new Notification();
-            notification.setType(NotificationType.POST_COMMENTED);
+            notification.setType(notificationType);
             notification.setContent(comment.getContent());
             notification.setReferenceId(String.valueOf(comment.getId()));
             notification.setFromUserId(userId);
-            notification.setToUserId(post.getUserId());
+            notification.setToUserId(toUserId);
             notification.setBeRead(false);
             notification.setCreatedAt(now);
             notificationMapper.insert(notification);
         }
-        return comment;
+    }
+
+    @Override
+    public List<Comment> getHotComments(long postId) {
+        // 目前五条热评
+        return commentMapper.selectHotComments(postId, 5);
+    }
+
+    @Override
+    public Comment getCommentById(long commentId) {
+        return commentMapper.selectById(commentId).orElseThrow(() -> new BusinessException("评论不存在"));
+    }
+
+    @Override
+    public List<Comment> getCommentsByParentId(long parentCommentId) {
+        return commentMapper.selectByParentId(parentCommentId);
+    }
+
+    @Override
+    public void deleteCommentById(long commentId) {
+        // 删除子评论，但不删除通知
+        // 减少帖子活跃度
+        commentMapper.deleteById(commentId);
+        commentMapper.deleteByParentId(commentId);
+        var commentOptional = commentMapper.selectById(commentId);
+        commentOptional.ifPresent(comment -> postMapper.updateCommentCount(comment.getPostId(), -1));
+    }
+
+    @Override
+    public Page<Comment> getSubCommentsPageable(long commentId, Pageable pageable) {
+        PageHelper.startPage(pageable.getPageNumber(), pageable.getPageSize());
+        var comments = commentMapper.selectByParentId(commentId);
+        var pageInfo = new PageInfo<>(comments);
+        return new PageImpl<>(comments, pageable, pageInfo.getTotal());
     }
 }

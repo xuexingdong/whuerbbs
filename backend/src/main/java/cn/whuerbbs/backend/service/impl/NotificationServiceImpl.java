@@ -47,21 +47,22 @@ public class NotificationServiceImpl implements NotificationService {
     public String getSummary(Notification notification) {
         String summary = null;
         switch (notification.getType()) {
-            case POST_COMMENTED:
             case POST_LIKED:
-                var postOptional = postMapper.selectById(Integer.parseInt(notification.getReferenceId()));
+                var postOptional = postMapper.selectById(Long.parseLong(notification.getReferenceId()));
                 if (postOptional.isPresent()) {
                     summary = postOptional.get().getTitle().substring(0, Math.min(Constants.NOTIFICATION_SUMMARY_LENGTH, postOptional.get().getTitle().length()));
                 }
                 break;
+            case POST_COMMENTED:
             case COMMENT_LIKED:
-                var commentOptional = commentMapper.selectById(Integer.parseInt(notification.getReferenceId()));
+            case COMMENT_REPLIED:
+                var commentOptional = commentMapper.selectById(Long.parseLong(notification.getReferenceId()));
                 if (commentOptional.isPresent()) {
                     summary = commentOptional.get().getContent().substring(0, Math.min(Constants.NOTIFICATION_SUMMARY_LENGTH, commentOptional.get().getContent().length()));
                 }
                 break;
             default:
-                break;
+                summary = "";
         }
         return summary;
     }
