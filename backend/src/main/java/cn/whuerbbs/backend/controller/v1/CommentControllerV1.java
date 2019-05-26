@@ -51,10 +51,10 @@ public class CommentControllerV1 {
      * @return
      */
     @GetMapping("comments/{commentId}")
-    public CommentVO getCommentDetail(@NotNull @PathVariable Long commentId,
-                                      @CurrentUser CurrentUserData currentUserData) {
+    public CommentListVO getCommentDetail(@NotNull @PathVariable Long commentId,
+                                          @CurrentUser CurrentUserData currentUserData) {
         var comment = commentService.getCommentById(commentId);
-        return getCommentVO(comment, currentUserData);
+        return getCommentListVO(comment, currentUserData);
     }
 
     /**
@@ -87,9 +87,9 @@ public class CommentControllerV1 {
      */
     @GetMapping("sub_comments")
     public Page<CommentVO> getSubComments(@Range(min = 1, max = Integer.MAX_VALUE) @RequestParam(defaultValue = "1") int page,
-                                              @Range(min = 1, max = 100) @RequestParam(value = "per_page", defaultValue = "10") int perPage,
-                                              @NotNull @RequestParam("comment_id") Long commentId,
-                                              @CurrentUser CurrentUserData currentUserData) {
+                                          @Range(min = 1, max = 100) @RequestParam(value = "per_page", defaultValue = "10") int perPage,
+                                          @NotNull @RequestParam("comment_id") Long commentId,
+                                          @CurrentUser CurrentUserData currentUserData) {
         var pageRequest = PageRequest.of(page, perPage);
         var pageable = commentService.getSubCommentsPageable(commentId, pageRequest);
         return pageable.map(comment -> getCommentVO(comment, currentUserData));
