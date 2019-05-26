@@ -54,4 +54,9 @@ public class PostCollectionServiceImpl implements PostCollectionService {
         var pageInfo = new PageInfo<>(postCollections);
         return new PageImpl<>(postCollections, pageable, pageInfo.getTotal());
     }
+
+    @Override
+    public boolean hasCollected(String userId, long postId) {
+        return postCollectionMapper.selectByUserIdAndPostId(userId, postId).isPresent();
+    }
 }

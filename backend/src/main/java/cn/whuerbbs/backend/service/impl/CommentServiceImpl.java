@@ -123,9 +123,4 @@ public class CommentServiceImpl implements CommentService {
         var pageInfo = new PageInfo<>(comments);
         return new PageImpl<>(comments, pageable, pageInfo.getTotal());
     }
-
-    @Override
-    public List<Comment> getAllSubComments(long parentCommentId) {
-        return commentMapper.selectByParentId(parentCommentId);
-    }
 }

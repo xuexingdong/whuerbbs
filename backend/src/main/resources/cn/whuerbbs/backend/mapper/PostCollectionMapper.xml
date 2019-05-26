@@ -21,4 +21,10 @@
           and p.deleted = 0
         order by pc.id desc
     </select>
+    <select id="selectByUserIdAndPostId" resultType="PostCollection">
+        select *
+        from post_collection
+        where user_id = #{userId}
+          and post_id = #{postId};
+    </select>
 </mapper>

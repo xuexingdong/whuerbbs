@@ -26,13 +26,14 @@ public class PostVO {
     // 是否已收藏
     private boolean collected;
 
-    public PostVO(Post post, List<String> images, List<Topic> topics) {
+    public PostVO(Post post, List<String> images, List<Topic> topics, boolean collected) {
         BeanUtils.copyProperties(post, this);
         this.createdBy = new UserVO(post.getUser());
         this.images = images;
         this.topics = topics.stream().map(TopicVO::new).collect(Collectors.toList());
         // TODO 公式抽取
         this.hot = this.likeCount + this.commentCount * 3 > 50;
+        this.collected = collected;
     }
 
     public long getId() {

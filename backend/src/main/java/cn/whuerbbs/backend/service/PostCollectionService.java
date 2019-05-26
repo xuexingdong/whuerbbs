@@ -10,4 +10,6 @@ public interface PostCollectionService {
     void cancelCollect(String userId, long postId);
 
     Page<PostCollection> getPageable(String userId, Pageable pageable);
+
+    boolean hasCollected(String userId, long postId);
 }

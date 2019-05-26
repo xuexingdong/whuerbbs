@@ -43,6 +43,9 @@ public class SecondhandPostControllerV1 {
     @Autowired
     private AttitudeService attitudeService;
 
+    @Autowired
+    private PostCollectionService postCollectionService;
+
     /**
      * 发布二手区帖子
      *
@@ -84,7 +87,8 @@ public class SecondhandPostControllerV1 {
         var attachments = attachmentService.getByPostId(post.getId());
         var topics = topicService.getTopicsByPostId(post.getId());
         var secondhandPost = secondhandPostService.getByPostId(post.getId()).orElseThrow(() -> new BusinessException("帖子不存在"));
-        var secondhandPostVO = new SecondhandPostVO(post, attachments.stream().map(attachment -> imageUtil.getFullPath(attachment.getPath())).collect(Collectors.toList()), topics, secondhandPost.getTradeCategory(), secondhandPost.getCampus());
+        var collected = postCollectionService.hasCollected(currentUserData.getUserId(), postId);
+        var secondhandPostVO = new SecondhandPostVO(post, attachments.stream().map(attachment -> imageUtil.getFullPath(attachment.getPath())).collect(Collectors.toList()), topics, collected, secondhandPost.getTradeCategory(), secondhandPost.getCampus());
         secondhandPostVO.setAttitudeStatus(attitudeService.getAttitudeStatus(currentUserData.getUserId(), AttitudeTarget.POST, String.valueOf(postId)));
         return secondhandPostVO;
     }

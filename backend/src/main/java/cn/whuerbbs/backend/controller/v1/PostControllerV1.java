@@ -102,7 +102,8 @@ public class PostControllerV1 {
         if (post.getBoard() == Board.ANONYMOUS_POST) {
             post = postService.addAnonymousInfo(post);
         }
-        var postVO = new PostVO(post, attachments.stream().map(attachment -> imageUtil.getFullPath(attachment.getPath())).collect(Collectors.toList()), topics);
+        var collected = postCollectionService.hasCollected(currentUserData.getUserId(), postId);
+        var postVO = new PostVO(post, attachments.stream().map(attachment -> imageUtil.getFullPath(attachment.getPath())).collect(Collectors.toList()), topics, collected);
         postVO.setAttitudeStatus(attitudeService.getAttitudeStatus(currentUserData.getUserId(), AttitudeTarget.POST, String.valueOf(postId)));
         return postVO;
     }

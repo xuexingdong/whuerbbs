@@ -8,11 +8,11 @@ import java.util.List;
 
 public class AnonymousPostVO extends PostVO {
 
-    public AnonymousPostVO(Post post, List<String> images, List<Topic> topics, String anonymousName, String avatarurl) {
-        super(post, images, topics);
+    public AnonymousPostVO(Post post, List<String> images, List<Topic> topics, boolean collected, String anonymousName, String avatarUrl) {
+        super(post, images, topics, collected);
         User user = new User();
         user.setNickname(anonymousName);
-        user.setAvatarUrl(avatarurl);
+        user.setAvatarUrl(avatarUrl);
         this.setCreatedBy(new UserVO(user));
     }
 }
