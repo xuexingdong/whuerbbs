@@ -57,14 +57,42 @@ public class CommentControllerV1 {
         return getCommentVO(comment, currentUserData);
     }
 
+    /**
+     * 获取帖子评论列表
+     *
+     * @param page
+     * @param perPage
+     * @param postId
+     * @param currentUserData
+     * @return
+     */
     @GetMapping("comments")
     public Page<CommentListVO> getComments(@Range(min = 1, max = Integer.MAX_VALUE) @RequestParam(defaultValue = "1") int page,
                                            @Range(min = 1, max = 100) @RequestParam(value = "per_page", defaultValue = "10") int perPage,
                                            @NotNull @RequestParam("post_id") Long postId,
                                            @CurrentUser CurrentUserData currentUserData) {
         var pageRequest = PageRequest.of(page, perPage);
-        var pageable = commentService.getPageable(postId, pageRequest);
-        return pageable.map(comment -> getCommentListVO(comment, currentUserData));
+        var commentPage = commentService.getPageable(postId, pageRequest);
+        return commentPage.map(comment -> getCommentListVO(comment, currentUserData));
+    }
+
+    /**
+     * 获取评论的子评论列表
+     *
+     * @param page
+     * @param perPage
+     * @param commentId
+     * @param currentUserData
+     * @return
+     */
+    @GetMapping("sub_comments")
+    public Page<CommentVO> getSubComments(@Range(min = 1, max = Integer.MAX_VALUE) @RequestParam(defaultValue = "1") int page,
+                                              @Range(min = 1, max = 100) @RequestParam(value = "per_page", defaultValue = "10") int perPage,
+                                              @NotNull @RequestParam("comment_id") Long commentId,
+                                              @CurrentUser CurrentUserData currentUserData) {
+        var pageRequest = PageRequest.of(page, perPage);
+        var pageable = commentService.getSubCommentsPageable(commentId, pageRequest);
+        return pageable.map(comment -> getCommentVO(comment, currentUserData));
     }
 
     @GetMapping("hot_comments")
@@ -88,9 +116,10 @@ public class CommentControllerV1 {
     }
 
     private CommentListVO getCommentListVO(Comment comment, CurrentUserData currentUserData) {
-        var subCommentPage = commentService.getSubCommentsPageable(comment.getId(), PageRequest.of(1, 2));
-        var subCommentsVO = subCommentPage.stream().map(c -> this.getCommentVO(c, currentUserData)).collect(Collectors.toList());
-        var vo = new CommentListVO(comment, subCommentsVO, subCommentPage.getTotalElements());
+        var subComments = commentService.getAllSubComments(comment.getId());
+        // var subCommentPage = commentService.getSubCommentsPageable(comment.getId(), PageRequest.of(1, 2));
+        var subCommentsVO = subComments.stream().map(c -> this.getCommentVO(c, currentUserData)).collect(Collectors.toList());
+        var vo = new CommentListVO(comment, subCommentsVO, subComments.size());
         vo.setAttitudeStatus(attitudeService.getAttitudeStatus(currentUserData.getUserId(), AttitudeTarget.COMMENT, String.valueOf(comment.getId())));
         return vo;
     }

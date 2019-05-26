@@ -9,6 +9,7 @@ import java.util.Optional;
 
 @Mapper
 public interface CommentMapper {
+    // 只有一级评论
     List<Comment> selectByPostIdPageable(long postId);
 
     int insert(Comment comment);

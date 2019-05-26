@@ -44,6 +44,7 @@
         from comment c
                  join user u on c.user_id = u.id
         where c.post_id = #{postId}
+          and parent_id = 0
           and c.deleted = 0
         order by c.created_at desc
     </select>
