@@ -21,4 +21,6 @@ public interface CommentService {
     void deleteCommentById(long commentId);
 
     Page<Comment> getSubCommentsPageable(long commentId, Pageable pageable);
+
+    List<Comment> getAllSubComments(long parentCommentId);
 }
