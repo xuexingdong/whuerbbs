@@ -123,7 +123,7 @@ public class PostControllerV1 {
      * @param postId
      * @param currentUserData
      */
-    @PutMapping("posts/{postId}/collect")
+    @GetMapping("posts/{postId}/collect")
     public void collect(@NotNull @PathVariable Long postId, @CurrentUser CurrentUserData currentUserData) {
         postCollectionService.collect(currentUserData.getUserId(), postId);
     }
@@ -134,7 +134,7 @@ public class PostControllerV1 {
      * @param postId
      * @param currentUserData
      */
-    @PutMapping("posts/{postId}/cancel_collect")
+    @GetMapping("posts/{postId}/cancel_collect")
     public void cancelCollect(@NotNull @PathVariable Long postId, @CurrentUser CurrentUserData currentUserData) {
         postCollectionService.cancelCollect(currentUserData.getUserId(), postId);
     }
