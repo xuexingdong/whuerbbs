@@ -75,7 +75,8 @@ public class CommentServiceImpl implements CommentService {
             var parentComment = parentCommentOptional.orElseThrow(() -> new BusinessException("父评论不存在"));
             commentDTO.setPostId(parentComment.getPostId());
             notificationType = NotificationType.COMMENT_REPLIED;
-            referenceId = String.valueOf(comment.getId());
+            // 帖子被回复时，返回一级评论id
+            referenceId = String.valueOf(commentDTO.getParentId());
             toUserId = parentComment.getUserId();
         }
 
