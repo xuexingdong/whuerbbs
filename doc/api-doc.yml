@@ -798,6 +798,8 @@ components:
           type: boolean
         collected:
           type: boolean
+        can_delete:
+          type: boolean
     CommentListVO:
       allOf:
         - $ref: '#/components/schemas/CommentVO'
@@ -824,6 +826,8 @@ components:
           $ref: '#/components/schemas/UserVO'
         attitude_status:
           $ref: '#/components/schemas/AttitudeStatus'
+        can:delete:
+          type: boolean
     TradeCategory:
       type: integer
       enum: [1, 2, 3, 4, 5]

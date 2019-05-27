@@ -26,4 +26,6 @@ public interface PostService {
     List<PostListVO> getPostListVO(List<Long> postIds);
 
     Post addAnonymousInfo(Post post);
+
+    void deleteById(long postId);
 }

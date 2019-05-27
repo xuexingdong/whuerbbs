@@ -3,10 +3,7 @@ package cn.whuerbbs.backend.service.impl;
 import cn.whuerbbs.backend.dto.PostDTO;
 import cn.whuerbbs.backend.enumeration.Board;
 import cn.whuerbbs.backend.exception.BusinessException;
-import cn.whuerbbs.backend.mapper.AnonymousPostMapper;
-import cn.whuerbbs.backend.mapper.PostAttachmentMapper;
-import cn.whuerbbs.backend.mapper.PostMapper;
-import cn.whuerbbs.backend.mapper.PostTopicMapper;
+import cn.whuerbbs.backend.mapper.*;
 import cn.whuerbbs.backend.model.Post;
 import cn.whuerbbs.backend.model.PostAttachment;
 import cn.whuerbbs.backend.model.User;
@@ -44,6 +41,9 @@ public class PostServiceImpl implements PostService {
 
     @Autowired
     private PostMapper postMapper;
+
+    @Autowired
+    private CommentMapper commentMapper;
 
     @Autowired
     private PostTopicMapper postTopicMapper;
@@ -126,7 +126,6 @@ public class PostServiceImpl implements PostService {
     public PostListVO getPostListVO(Post post) {
         var attachmentOptional = attachmentService.getFirstByPostId(post.getId());
         var topics = topicService.getTopicsByPostId(post.getId());
-        // TODO 优化点
         if (post.getBoard() == Board.ANONYMOUS_POST) {
             post = addAnonymousInfo(post);
         }
@@ -150,5 +149,13 @@ public class PostServiceImpl implements PostService {
         user.setNickname(anonymousPost.getAnonymousName());
         post.setUser(user);
         return post;
+    }
+
+    @Override
+    public void deleteById(long postId) {
+        // 删除帖子
+        postMapper.deleteById(postId);
+        // 删除所有子评论
+        commentMapper.deleteByPostId(postId);
     }
 }

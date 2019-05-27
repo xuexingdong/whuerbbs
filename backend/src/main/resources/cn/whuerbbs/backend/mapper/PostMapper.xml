@@ -30,6 +30,12 @@
         where id = #{id}
           and deleted = 0
     </update>
+    <update id="deleteById">
+        update post
+        set deleted = unix_timestamp()
+        where id = #{id}
+          and deleted = 0
+    </update>
     <select id="selectPageable" resultMap="postResult">
         select p.id pid,
         p.title,

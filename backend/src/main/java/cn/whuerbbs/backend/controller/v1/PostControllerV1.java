@@ -103,9 +103,14 @@ public class PostControllerV1 {
             post = postService.addAnonymousInfo(post);
         }
         var collected = postCollectionService.hasCollected(currentUserData.getUserId(), postId);
-        var postVO = new PostVO(post, attachments.stream().map(attachment -> imageUtil.getFullPath(attachment.getPath())).collect(Collectors.toList()), topics, collected);
+        var postVO = new PostVO(post, attachments.stream().map(attachment -> imageUtil.getFullPath(attachment.getPath())).collect(Collectors.toList()), topics, collected, currentUserData);
         postVO.setAttitudeStatus(attitudeService.getAttitudeStatus(currentUserData.getUserId(), AttitudeTarget.POST, String.valueOf(postId)));
         return postVO;
+    }
+
+    @DeleteMapping("posts/{postId}")
+    public void delete(@NotNull @PathVariable Long postId, @CurrentUser CurrentUserData currentUserData) {
+        postService.deleteById(postId);
     }
 
     @GetMapping("posts/{postId}/like")

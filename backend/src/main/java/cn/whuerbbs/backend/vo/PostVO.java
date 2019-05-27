@@ -1,5 +1,6 @@
 package cn.whuerbbs.backend.vo;
 
+import cn.whuerbbs.backend.common.CurrentUserData;
 import cn.whuerbbs.backend.enumeration.AttitudeStatus;
 import cn.whuerbbs.backend.enumeration.Board;
 import cn.whuerbbs.backend.model.Post;
@@ -27,8 +28,9 @@ public class PostVO {
     private boolean hot;
     // 是否已收藏
     private boolean collected;
+    private boolean canDelete;
 
-    public PostVO(Post post, List<String> images, List<Topic> topics, boolean collected) {
+    public PostVO(Post post, List<String> images, List<Topic> topics, boolean collected, CurrentUserData currentUserData) {
         BeanUtils.copyProperties(post, this);
         this.createdBy = new UserVO(post.getUser());
         this.images = images;
@@ -36,6 +38,7 @@ public class PostVO {
         // TODO 公式抽取
         this.hot = this.likeCount + this.commentCount * 3 > 50;
         this.collected = collected;
+        this.canDelete = currentUserData.getUserId().equals(post.getUserId());
     }
 
     public long getId() {
@@ -148,5 +151,13 @@ public class PostVO {
 
     public void setCollected(boolean collected) {
         this.collected = collected;
+    }
+
+    public boolean isCanDelete() {
+        return canDelete;
+    }
+
+    public void setCanDelete(boolean canDelete) {
+        this.canDelete = canDelete;
     }
 }

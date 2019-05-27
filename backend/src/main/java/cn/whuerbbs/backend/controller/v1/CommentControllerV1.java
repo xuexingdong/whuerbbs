@@ -118,7 +118,7 @@ public class CommentControllerV1 {
     private CommentListVO getCommentListVO(Comment comment, CurrentUserData currentUserData) {
         var subCommentPage = commentService.getSubCommentsPageable(comment.getId(), PageRequest.of(1, 2));
         var subCommentsVO = subCommentPage.stream().map(c -> this.getCommentVO(c, currentUserData)).collect(Collectors.toList());
-        var vo = new CommentListVO(comment, subCommentsVO, subCommentPage.getTotalElements());
+        var vo = new CommentListVO(comment, subCommentsVO, subCommentPage.getTotalElements(), currentUserData);
         vo.setAttitudeStatus(attitudeService.getAttitudeStatus(currentUserData.getUserId(), AttitudeTarget.COMMENT, String.valueOf(comment.getId())));
         return vo;
     }
@@ -126,13 +126,13 @@ public class CommentControllerV1 {
     private CommentListVO getCommentDetailVO(Comment comment, CurrentUserData currentUserData) {
         var subComments = commentService.getAllSubComments(comment.getId());
         var subCommentsVO = subComments.stream().map(c -> this.getCommentVO(c, currentUserData)).collect(Collectors.toList());
-        var vo = new CommentListVO(comment, subCommentsVO, subComments.size());
+        var vo = new CommentListVO(comment, subCommentsVO, subComments.size(), currentUserData);
         vo.setAttitudeStatus(attitudeService.getAttitudeStatus(currentUserData.getUserId(), AttitudeTarget.COMMENT, String.valueOf(comment.getId())));
         return vo;
     }
 
     private CommentVO getCommentVO(Comment comment, CurrentUserData currentUserData) {
-        var vo = new CommentVO(comment);
+        var vo = new CommentVO(comment, currentUserData);
         vo.setAttitudeStatus(attitudeService.getAttitudeStatus(currentUserData.getUserId(), AttitudeTarget.COMMENT, String.valueOf(comment.getId())));
         return vo;
     }

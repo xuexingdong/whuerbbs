@@ -6,7 +6,6 @@ import cn.whuerbbs.backend.dto.AnonymousPostDTO;
 import cn.whuerbbs.backend.enumeration.AttitudeTarget;
 import cn.whuerbbs.backend.enumeration.Board;
 import cn.whuerbbs.backend.exception.BusinessException;
-import cn.whuerbbs.backend.model.PostCollection;
 import cn.whuerbbs.backend.service.*;
 import cn.whuerbbs.backend.util.ImageUtil;
 import cn.whuerbbs.backend.vo.AnonymousPostListVO;
@@ -92,7 +91,9 @@ public class AnonymousPostControllerV1 {
         var anonymousPost = anonymousPostService.getByPostId(post.getId()).orElseThrow(() -> new BusinessException("帖子不存在"));
         var anonymousPostVO = new AnonymousPostVO(post,
                 attachments.stream().map(attachment -> imageUtil.getFullPath(attachment.getPath())).collect(Collectors.toList()),
-                topics, collected,
+                topics,
+                collected,
+                currentUserData,
                 anonymousPost.getAnonymousName(),
                 imageUtil.getFullPath(defaultAnonymousAvatarPath));
         anonymousPostVO.setAttitudeStatus(attitudeService.getAttitudeStatus(currentUserData.getUserId(), AttitudeTarget.POST, String.valueOf(postId)));

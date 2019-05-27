@@ -1,5 +1,6 @@
 package cn.whuerbbs.backend.vo;
 
+import cn.whuerbbs.backend.common.CurrentUserData;
 import cn.whuerbbs.backend.model.Comment;
 
 import java.util.List;
@@ -8,8 +9,8 @@ public class CommentListVO extends CommentVO {
     private List<CommentVO> subComments;
     private long subCommentCount;
 
-    public CommentListVO(Comment comment, List<CommentVO> subComments, long subCommentCount) {
-        super(comment);
+    public CommentListVO(Comment comment, List<CommentVO> subComments, long subCommentCount, CurrentUserData currentUserData) {
+        super(comment, currentUserData);
         this.subComments = subComments;
         this.subCommentCount = subCommentCount;
     }
