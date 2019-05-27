@@ -92,7 +92,7 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
-    public Page<Post> getPageableByBoard(Pageable pageable, Board board) {
+    public Page<Post> getPageableByBoard(Board board, Pageable pageable) {
         PageHelper.startPage(pageable.getPageNumber(), pageable.getPageSize());
         var post = new Post();
         post.setBoard(board);
@@ -107,7 +107,7 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
-    public Page<Post> getPostsPageableByTopicId(Pageable pageable, long topicId) {
+    public Page<Post> getPostsPageableByTopicId(long topicId, Pageable pageable) {
         PageHelper.startPage(pageable.getPageNumber(), pageable.getPageSize());
         var posts = postMapper.selectPostsByTopicId(topicId);
         var pageInfo = new PageInfo<>(posts);
@@ -115,7 +115,7 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
-    public Page<Post> getHotPostsPageableByTopicId(Pageable pageable, long topicId) {
+    public Page<Post> getHotPostsPageableByTopicId(long topicId, Pageable pageable) {
         PageHelper.startPage(pageable.getPageNumber(), pageable.getPageSize());
         var posts = postMapper.selectHotPostIdsByTopicId(topicId);
         var pageInfo = new PageInfo<>(posts);

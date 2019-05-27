@@ -82,12 +82,12 @@ public class PostControllerV1 {
         // 按版块查询
         if (Objects.nonNull(topicId)) {
             if (hot) {
-                postPage = postService.getHotPostsPageableByTopicId(pageRequest, topicId);
+                postPage = postService.getHotPostsPageableByTopicId(topicId, pageRequest);
             } else {
-                postPage = postService.getPostsPageableByTopicId(pageRequest, topicId);
+                postPage = postService.getPostsPageableByTopicId(topicId, pageRequest);
             }
         } else {
-            postPage = postService.getPageableByBoard(pageRequest, board);
+            postPage = postService.getPageableByBoard(board, pageRequest);
         }
         return postPage.map(postService::getPostListVO);
     }

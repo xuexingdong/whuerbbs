@@ -126,7 +126,7 @@ public class CommentControllerV1 {
     private CommentListVO getCommentDetailVO(Comment comment, CurrentUserData currentUserData) {
         var subComments = commentService.getAllSubComments(comment.getId());
         var subCommentsVO = subComments.stream().map(c -> this.getCommentVO(c, currentUserData)).collect(Collectors.toList());
-        var vo = new CommentListVO(comment, subCommentsVO, subComments.size(), currentUserData);
+        var vo = new CommentListVO(comment, subCommentsVO, subCommentsVO.size(), currentUserData);
         vo.setAttitudeStatus(attitudeService.getAttitudeStatus(currentUserData.getUserId(), AttitudeTarget.COMMENT, String.valueOf(comment.getId())));
         return vo;
     }

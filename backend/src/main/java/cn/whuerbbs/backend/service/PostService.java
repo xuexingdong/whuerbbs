@@ -13,13 +13,13 @@ import java.util.Optional;
 public interface PostService {
     void create(String userId, PostDTO postDTO);
 
-    Page<Post> getPageableByBoard(Pageable pageable, Board board);
+    Page<Post> getPageableByBoard(Board board, Pageable pageable);
 
     Optional<Post> getById(long postId);
 
-    Page<Post> getPostsPageableByTopicId(Pageable pageable, long topicId);
+    Page<Post> getPostsPageableByTopicId(long topicId, Pageable pageable);
 
-    Page<Post> getHotPostsPageableByTopicId(Pageable pageable, long topicId);
+    Page<Post> getHotPostsPageableByTopicId(long topicId, Pageable pageable);
 
     PostListVO getPostListVO(Post post);
 
