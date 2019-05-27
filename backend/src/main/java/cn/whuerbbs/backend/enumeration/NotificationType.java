@@ -6,7 +6,8 @@ public enum NotificationType implements BaseEnum {
     POST_COMMENTED(1),
     POST_LIKED(2),
     COMMENT_LIKED(3),
-    COMMENT_REPLIED(4);
+    COMMENT_REPLIED(4),
+    SUB_COMMENT_LIKED(5);
 
     private final int type;
 

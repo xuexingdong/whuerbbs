@@ -62,9 +62,14 @@ public class AttitudeServiceImpl implements AttitudeService {
                 break;
             case COMMENT:
                 commentMapper.updateLikeCount(Long.parseLong(attitude.getTargetId()), 1);
-                notification.setType(NotificationType.COMMENT_LIKED);
                 var commentOptional = commentMapper.selectById(Integer.parseInt(targetId));
                 var comment = commentOptional.orElseThrow(() -> new BusinessException("评论不存在"));
+                // 一级评论
+                if (comment.getParentId() == 0) {
+                    notification.setType(NotificationType.COMMENT_LIKED);
+                } else {
+                    notification.setType(NotificationType.SUB_COMMENT_LIKED);
+                }
                 notification.setToUserId(comment.getUserId());
                 break;
             default:

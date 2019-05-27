@@ -691,13 +691,14 @@ components:
          * `2` - 女
     NotificationType:
       type: integer
-      enum: [1, 2, 3, 4]
+      enum: [1, 2, 3, 4, 5]
       description: >
         Sort order:
          * `1` - 帖子被评论
          * `2` - 帖子被点赞
          * `3` - 评论被点赞
          * `4` - 评论被回复
+         * `5` - 二级评论被点赞
     UserVO:
       type: object
       properties:
