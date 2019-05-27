@@ -72,7 +72,7 @@ public class PostControllerV1 {
     @GetMapping("posts")
     public Page<PostListVO> getPosts(
             @RequestParam(required = false) Board board,
-            @RequestParam(value = "topic_id", required = false) Integer topicId,
+            @RequestParam(value = "topic_id", required = false) Long topicId,
             @RequestParam(value = "hot", required = false) boolean hot,
             @Range(min = 1, max = Integer.MAX_VALUE) @RequestParam(defaultValue = "1") int page,
             @Range(min = 1, max = 100) @RequestParam(value = "per_page", defaultValue = "10") int perPage,
@@ -82,12 +82,12 @@ public class PostControllerV1 {
         // 按版块查询
         if (Objects.nonNull(topicId)) {
             if (hot) {
-                postPage = postService.getHotPostsPageableByTopicId(pageRequest, topicId);
+                postPage = postService.getHotPostsPageableByTopicId(topicId, pageRequest);
             } else {
-                postPage = postService.getPostsPageableByTopicId(pageRequest, topicId);
+                postPage = postService.getPostsPageableByTopicId(topicId, pageRequest);
             }
         } else {
-            postPage = postService.getPageableByBoard(pageRequest, board);
+            postPage = postService.getPageableByBoard(board, pageRequest);
         }
         return postPage.map(postService::getPostListVO);
     }
@@ -103,9 +103,14 @@ public class PostControllerV1 {
             post = postService.addAnonymousInfo(post);
         }
         var collected = postCollectionService.hasCollected(currentUserData.getUserId(), postId);
-        var postVO = new PostVO(post, attachments.stream().map(attachment -> imageUtil.getFullPath(attachment.getPath())).collect(Collectors.toList()), topics, collected);
+        var postVO = new PostVO(post, attachments.stream().map(attachment -> imageUtil.getFullPath(attachment.getPath())).collect(Collectors.toList()), topics, collected, currentUserData);
         postVO.setAttitudeStatus(attitudeService.getAttitudeStatus(currentUserData.getUserId(), AttitudeTarget.POST, String.valueOf(postId)));
         return postVO;
+    }
+
+    @DeleteMapping("posts/{postId}")
+    public void delete(@NotNull @PathVariable Long postId, @CurrentUser CurrentUserData currentUserData) {
+        postService.deleteById(postId);
     }
 
     @GetMapping("posts/{postId}/like")

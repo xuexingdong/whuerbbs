@@ -29,6 +29,12 @@
         where parent_id = #{parentCommentId}
           and deleted = 0
     </update>
+    <update id="deleteByPostId">
+        update comment
+        set deleted = unix_timestamp()
+        where post_id = #{postId}
+          and deleted = 0
+    </update>
     <select id="selectByPostIdPageable" resultMap="commentResult">
         select c.id cid,
                c.content,

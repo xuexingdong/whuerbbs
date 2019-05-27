@@ -1,5 +1,6 @@
 package cn.whuerbbs.backend.vo;
 
+import cn.whuerbbs.backend.common.CurrentUserData;
 import cn.whuerbbs.backend.enumeration.AttitudeStatus;
 import cn.whuerbbs.backend.model.Comment;
 import org.springframework.beans.BeanUtils;
@@ -13,11 +14,13 @@ public class CommentVO {
     private LocalDateTime createdAt;
     private UserVO createdBy;
     private AttitudeStatus attitudeStatus;
+    private boolean canDelete;
 
-    public CommentVO(Comment comment) {
+    public CommentVO(Comment comment, CurrentUserData currentUserData) {
         BeanUtils.copyProperties(comment, this);
         this.id = comment.getId();
         this.createdBy = new UserVO(comment.getUser());
+        this.canDelete = currentUserData.getUserId().equals(comment.getUserId());
     }
 
     public long getId() {
@@ -66,5 +69,13 @@ public class CommentVO {
 
     public void setAttitudeStatus(AttitudeStatus attitudeStatus) {
         this.attitudeStatus = attitudeStatus;
+    }
+
+    public boolean isCanDelete() {
+        return canDelete;
+    }
+
+    public void setCanDelete(boolean canDelete) {
+        this.canDelete = canDelete;
     }
 }

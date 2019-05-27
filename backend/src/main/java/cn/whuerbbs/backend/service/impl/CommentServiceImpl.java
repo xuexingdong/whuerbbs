@@ -110,10 +110,13 @@ public class CommentServiceImpl implements CommentService {
     public void deleteCommentById(long commentId) {
         // 删除子评论，但不删除通知
         // 减少帖子活跃度
-        commentMapper.deleteById(commentId);
-        commentMapper.deleteByParentId(commentId);
         var commentOptional = commentMapper.selectById(commentId);
-        commentOptional.ifPresent(comment -> postMapper.updateCommentCount(comment.getPostId(), -1));
+        commentOptional.ifPresent(comment ->
+        {
+            var count1 = commentMapper.deleteById(commentId);
+            var count2 = commentMapper.deleteByParentId(commentId);
+            postMapper.updateCommentCount(comment.getPostId(), -(count1 + count2));
+        });
     }
 
     @Override

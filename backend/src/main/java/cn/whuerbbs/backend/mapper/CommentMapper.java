@@ -27,4 +27,6 @@ public interface CommentMapper {
     int deleteById(long id);
 
     int deleteByParentId(long parentCommentId);
+
+    int deleteByPostId(long postId);
 }

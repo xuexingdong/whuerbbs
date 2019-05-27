@@ -6,6 +6,7 @@ import cn.whuerbbs.backend.dto.SecondhandPostDTO;
 import cn.whuerbbs.backend.enumeration.AttitudeTarget;
 import cn.whuerbbs.backend.enumeration.Board;
 import cn.whuerbbs.backend.exception.BusinessException;
+import cn.whuerbbs.backend.model.Post;
 import cn.whuerbbs.backend.service.*;
 import cn.whuerbbs.backend.util.ImageUtil;
 import cn.whuerbbs.backend.vo.SecondhandPostListVO;
@@ -18,6 +19,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.constraints.NotNull;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 @RestController
@@ -67,11 +69,22 @@ public class SecondhandPostControllerV1 {
      */
     @GetMapping
     public Page<SecondhandPostListVO> getAllSecondhandPosts(
+            @RequestParam(value = "topic_id", required = false) Long topicId,
+            @RequestParam(value = "hot", required = false) boolean hot,
             @Range(min = 1, max = Integer.MAX_VALUE) @RequestParam(defaultValue = "1") int page,
             @Range(min = 1, max = 100) @RequestParam(value = "per_page", defaultValue = "10") int perPage,
             @CurrentUser CurrentUserData currentUserData) {
         var pageRequest = PageRequest.of(page, perPage);
-        var postPage = postService.getPageableByBoard(pageRequest, Board.SECONDHAND);
+        Page<Post> postPage;
+        if (Objects.nonNull(topicId)) {
+            if (hot) {
+                postPage = postService.getHotPostsPageableByTopicId(topicId, pageRequest);
+            } else {
+                postPage = postService.getPostsPageableByTopicId(topicId, pageRequest);
+            }
+        } else {
+            postPage = postService.getPageableByBoard(Board.SECONDHAND, pageRequest);
+        }
         return postPage.map(post -> {
             var attachmentOptional = attachmentService.getFirstByPostId(post.getId());
             var secondhandPost = secondhandPostService.getByPostId(post.getId()).orElseThrow(() -> new BusinessException("二手交易不存在"));
@@ -88,7 +101,7 @@ public class SecondhandPostControllerV1 {
         var topics = topicService.getTopicsByPostId(post.getId());
         var secondhandPost = secondhandPostService.getByPostId(post.getId()).orElseThrow(() -> new BusinessException("帖子不存在"));
         var collected = postCollectionService.hasCollected(currentUserData.getUserId(), postId);
-        var secondhandPostVO = new SecondhandPostVO(post, attachments.stream().map(attachment -> imageUtil.getFullPath(attachment.getPath())).collect(Collectors.toList()), topics, collected, secondhandPost.getTradeCategory(), secondhandPost.getCampus());
+        var secondhandPostVO = new SecondhandPostVO(post, attachments.stream().map(attachment -> imageUtil.getFullPath(attachment.getPath())).collect(Collectors.toList()), topics, collected, currentUserData, secondhandPost.getTradeCategory(), secondhandPost.getCampus());
         secondhandPostVO.setAttitudeStatus(attitudeService.getAttitudeStatus(currentUserData.getUserId(), AttitudeTarget.POST, String.valueOf(postId)));
         return secondhandPostVO;
     }

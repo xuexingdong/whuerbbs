@@ -1,5 +1,6 @@
 package cn.whuerbbs.backend.vo;
 
+import cn.whuerbbs.backend.common.CurrentUserData;
 import cn.whuerbbs.backend.enumeration.Campus;
 import cn.whuerbbs.backend.enumeration.TradeCategory;
 import cn.whuerbbs.backend.model.Post;
@@ -11,8 +12,8 @@ public class SecondhandPostVO extends PostVO {
     private TradeCategory tradeCategory;
     private Campus campus;
 
-    public SecondhandPostVO(Post post, List<String> images, List<Topic> topics, boolean collected, TradeCategory tradeCategory, Campus campus) {
-        super(post, images, topics, collected);
+    public SecondhandPostVO(Post post, List<String> images, List<Topic> topics, boolean collected, CurrentUserData currentUserData, TradeCategory tradeCategory, Campus campus) {
+        super(post, images, topics, collected, currentUserData);
         this.tradeCategory = tradeCategory;
         this.campus = campus;
     }

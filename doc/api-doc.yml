@@ -225,6 +225,8 @@ paths:
                     $ref: '#/components/schemas/NotificationType'
                   reference_id:
                     type: string
+                  board:
+                    $ref: '#/components/schemas/Board'
                   content:
                     type: string
                   summary:
@@ -774,6 +776,8 @@ components:
           type: string
         content:
           type: string
+        board:
+          $ref: '#/components/schemas/Board'
         images:
           type: array
           items:
@@ -795,6 +799,8 @@ components:
         hot:
           type: boolean
         collected:
+          type: boolean
+        can_delete:
           type: boolean
     CommentListVO:
       allOf:
@@ -822,6 +828,8 @@ components:
           $ref: '#/components/schemas/UserVO'
         attitude_status:
           $ref: '#/components/schemas/AttitudeStatus'
+        can_delete:
+          type: boolean
     TradeCategory:
       type: integer
       enum: [1, 2, 3, 4, 5]

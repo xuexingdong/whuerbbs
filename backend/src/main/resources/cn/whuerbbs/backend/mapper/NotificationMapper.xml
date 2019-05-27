@@ -17,6 +17,8 @@
                n.content,
                n.reference_id,
                n.from_user_id,
+               n.to_user_id,
+               n.be_read,
                n.created_at,
                u.id,
                u.nickname,
