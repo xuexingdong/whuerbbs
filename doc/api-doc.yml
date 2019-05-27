@@ -828,7 +828,7 @@ components:
           $ref: '#/components/schemas/UserVO'
         attitude_status:
           $ref: '#/components/schemas/AttitudeStatus'
-        can:delete:
+        can_delete:
           type: boolean
     TradeCategory:
       type: integer
