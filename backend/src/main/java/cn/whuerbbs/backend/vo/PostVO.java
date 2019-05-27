@@ -1,6 +1,7 @@
 package cn.whuerbbs.backend.vo;
 
 import cn.whuerbbs.backend.enumeration.AttitudeStatus;
+import cn.whuerbbs.backend.enumeration.Board;
 import cn.whuerbbs.backend.model.Post;
 import cn.whuerbbs.backend.model.Topic;
 import org.springframework.beans.BeanUtils;
@@ -13,6 +14,7 @@ public class PostVO {
     private long id;
     private String title;
     private String content;
+    private Board board;
     private List<String> images;
     private long likeCount;
     private long commentCount;
@@ -58,6 +60,14 @@ public class PostVO {
 
     public void setContent(String content) {
         this.content = content;
+    }
+
+    public Board getBoard() {
+        return board;
+    }
+
+    public void setBoard(Board board) {
+        this.board = board;
     }
 
     public List<String> getImages() {

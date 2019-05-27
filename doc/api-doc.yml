@@ -774,6 +774,8 @@ components:
           type: string
         content:
           type: string
+        board:
+          $ref: '#/components/schemas/Board'
         images:
           type: array
           items:
