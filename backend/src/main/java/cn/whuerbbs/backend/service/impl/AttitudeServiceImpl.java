@@ -59,6 +59,7 @@ public class AttitudeServiceImpl implements AttitudeService {
                 var postOptional = postMapper.selectById(Integer.parseInt(targetId));
                 var post = postOptional.orElseThrow(() -> new BusinessException("帖子不存在"));
                 notification.setToUserId(post.getUserId());
+                notification.setReferenceId(String.valueOf(post.getId()));
                 break;
             case COMMENT:
                 commentMapper.updateLikeCount(Long.parseLong(attitude.getTargetId()), 1);
@@ -67,8 +68,12 @@ public class AttitudeServiceImpl implements AttitudeService {
                 // 一级评论
                 if (comment.getParentId() == 0) {
                     notification.setType(NotificationType.COMMENT_LIKED);
-                } else {
+                    notification.setReferenceId(String.valueOf(comment.getPostId()));
+                }
+                // 二级评论
+                else {
                     notification.setType(NotificationType.SUB_COMMENT_LIKED);
+                    notification.setReferenceId(String.valueOf(comment.getParentId()));
                 }
                 notification.setToUserId(comment.getUserId());
                 break;
@@ -77,7 +82,6 @@ public class AttitudeServiceImpl implements AttitudeService {
         }
         // 发送通知和接收通知的不是同一个人
         if (!userId.equals(notification.getToUserId())) {
-            notification.setReferenceId(targetId);
             notification.setContent("");
             notification.setFromUserId(userId);
             notification.setBeRead(false);

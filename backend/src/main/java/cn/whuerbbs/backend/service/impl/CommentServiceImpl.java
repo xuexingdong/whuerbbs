@@ -52,21 +52,6 @@ public class CommentServiceImpl implements CommentService {
         // 帖子活跃时间
         postMapper.updateLastActiveTime(commentDTO.getPostId(), now);
 
-        NotificationType notificationType;
-        String toUserId;
-        // 一级评论
-        if (commentDTO.getParentId() == 0) {
-            notificationType = NotificationType.POST_COMMENTED;
-            toUserId = post.getUserId();
-        }
-        // 二级评论评论，postId以子评论为主，忽略传入参数的postId
-        else {
-            var parentCommentOptional = commentMapper.selectById(commentDTO.getParentId());
-            var parentComment = parentCommentOptional.orElseThrow(() -> new BusinessException("父评论不存在"));
-            commentDTO.setPostId(parentComment.getPostId());
-            notificationType = NotificationType.COMMENT_REPLIED;
-            toUserId = parentComment.getUserId();
-        }
         var comment = new Comment();
         comment.setPostId(commentDTO.getPostId());
         comment.setContent(commentDTO.getContent());
@@ -75,13 +60,32 @@ public class CommentServiceImpl implements CommentService {
         comment.setCreatedAt(now);
         commentMapper.insert(comment);
 
+        NotificationType notificationType;
+        String toUserId;
+        String referenceId;
+        // 一级评论
+        if (commentDTO.getParentId() == 0) {
+            notificationType = NotificationType.POST_COMMENTED;
+            referenceId = String.valueOf(post.getId());
+            toUserId = post.getUserId();
+        }
+        // 二级评论评论，postId以子评论为主，忽略传入参数的postId
+        else {
+            var parentCommentOptional = commentMapper.selectById(commentDTO.getParentId());
+            var parentComment = parentCommentOptional.orElseThrow(() -> new BusinessException("父评论不存在"));
+            commentDTO.setPostId(parentComment.getPostId());
+            notificationType = NotificationType.COMMENT_REPLIED;
+            referenceId = String.valueOf(comment.getId());
+            toUserId = parentComment.getUserId();
+        }
+
         // 通知的发起者永远是唤起接口的人
         // 当帖子所有者不是自己的时候，才发送通知
         if (!userId.equals(toUserId)) {
             var notification = new Notification();
             notification.setType(notificationType);
             notification.setContent(comment.getContent());
-            notification.setReferenceId(String.valueOf(comment.getId()));
+            notification.setReferenceId(referenceId);
             notification.setFromUserId(userId);
             notification.setToUserId(toUserId);
             notification.setBeRead(false);
