@@ -1,6 +1,7 @@
 package cn.whuerbbs.backend.service.impl;
 
 import cn.whuerbbs.backend.common.Constants;
+import cn.whuerbbs.backend.enumeration.Board;
 import cn.whuerbbs.backend.mapper.CommentMapper;
 import cn.whuerbbs.backend.mapper.NotificationMapper;
 import cn.whuerbbs.backend.mapper.PostMapper;
@@ -8,6 +9,7 @@ import cn.whuerbbs.backend.model.Notification;
 import cn.whuerbbs.backend.service.NotificationService;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
+import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -44,12 +46,14 @@ public class NotificationServiceImpl implements NotificationService {
     }
 
     @Override
-    public String getSummary(Notification notification) {
+    public Pair<Board, String> getBoardSummary(Notification notification) {
         String summary = null;
+        Board board = null;
         switch (notification.getType()) {
             case POST_LIKED:
-                var postOptional = postMapper.selectById(Long.parseLong(notification.getReferenceId()));
+                final var postOptional = postMapper.selectById(Long.parseLong(notification.getReferenceId()));
                 if (postOptional.isPresent()) {
+                    board = postOptional.get().getBoard();
                     summary = postOptional.get().getTitle().substring(0, Math.min(Constants.NOTIFICATION_SUMMARY_LENGTH, postOptional.get().getTitle().length()));
                 }
                 break;
@@ -58,12 +62,17 @@ public class NotificationServiceImpl implements NotificationService {
             case COMMENT_REPLIED:
                 var commentOptional = commentMapper.selectById(Long.parseLong(notification.getReferenceId()));
                 if (commentOptional.isPresent()) {
+                    var comment = commentOptional.get();
+                    var postOptional2 = postMapper.selectById(comment.getPostId());
+                    if (postOptional2.isPresent()) {
+                        board = postOptional2.get().getBoard();
+                    }
                     summary = commentOptional.get().getContent().substring(0, Math.min(Constants.NOTIFICATION_SUMMARY_LENGTH, commentOptional.get().getContent().length()));
                 }
                 break;
             default:
                 summary = "";
         }
-        return summary;
+        return Pair.of(board, summary);
     }
 }

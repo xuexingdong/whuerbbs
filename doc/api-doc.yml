@@ -225,6 +225,8 @@ paths:
                     $ref: '#/components/schemas/NotificationType'
                   reference_id:
                     type: string
+                  board:
+                    $ref: '#/components/schemas/Board'
                   content:
                     type: string
                   summary:
