@@ -2,6 +2,7 @@ package cn.whuerbbs.backend.service.impl;
 
 import cn.whuerbbs.backend.dto.SecondhandPostDTO;
 import cn.whuerbbs.backend.enumeration.Board;
+import cn.whuerbbs.backend.exception.BusinessException;
 import cn.whuerbbs.backend.mapper.PostMapper;
 import cn.whuerbbs.backend.mapper.PostTopicMapper;
 import cn.whuerbbs.backend.mapper.SecondhandPostMapper;
@@ -55,9 +56,11 @@ public class SecondhandPostServiceImpl implements SecondhandPostService {
 
         // 将物品分类与交易区域插入话题
         var topics = topicMapper.selectByTitles(Board.SECONDHAND, Set.of(secondHandPostDTO.getTradeCategory().getTitle(), secondHandPostDTO.getCampus().getTitle()));
-        if (!topics.isEmpty()) {
-            postTopicMapper.insertBatch(post.getId(), topics.stream().map(Topic::getId).collect(Collectors.toSet()));
+        if (topics.size() != 2) {
+            throw new BusinessException("话题错误");
         }
+        postTopicMapper.insertBatch(post.getId(), topics.stream().map(Topic::getId).collect(Collectors.toSet()));
+
 
     }
 
