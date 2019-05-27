@@ -107,15 +107,15 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
-    public Page<Post> getPostsPageableByTopicId(Pageable pageable, int topicId) {
+    public Page<Post> getPostsPageableByTopicId(Pageable pageable, long topicId) {
         PageHelper.startPage(pageable.getPageNumber(), pageable.getPageSize());
-        var posts = postMapper.selectPostIdsByTopicId(topicId);
+        var posts = postMapper.selectPostsByTopicId(topicId);
         var pageInfo = new PageInfo<>(posts);
         return new PageImpl<>(posts, pageable, pageInfo.getTotal());
     }
 
     @Override
-    public Page<Post> getHotPostsPageableByTopicId(Pageable pageable, int topicId) {
+    public Page<Post> getHotPostsPageableByTopicId(Pageable pageable, long topicId) {
         PageHelper.startPage(pageable.getPageNumber(), pageable.getPageSize());
         var posts = postMapper.selectHotPostIdsByTopicId(topicId);
         var pageInfo = new PageInfo<>(posts);

@@ -20,7 +20,7 @@ public interface TopicMapper {
 
     List<Topic> selectByTitles(@Param("board") Board board, @Param("titles") Set<String> titles);
 
-    Optional<Topic> selectById(int id);
+    Optional<Topic> selectById(long id);
 
-    Map<String, Object> getParticipateUserCountAndDiscussionMountById(int id);
+    Map<String, Object> getParticipateUserCountAndDiscussionMountById(long id);
 }

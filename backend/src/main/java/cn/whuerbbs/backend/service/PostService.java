@@ -17,9 +17,9 @@ public interface PostService {
 
     Optional<Post> getById(long postId);
 
-    Page<Post> getPostsPageableByTopicId(Pageable pageable, int topicId);
+    Page<Post> getPostsPageableByTopicId(Pageable pageable, long topicId);
 
-    Page<Post> getHotPostsPageableByTopicId(Pageable pageable, int topicId);
+    Page<Post> getHotPostsPageableByTopicId(Pageable pageable, long topicId);
 
     PostListVO getPostListVO(Post post);
 

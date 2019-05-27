@@ -13,9 +13,9 @@ public interface TopicService {
 
     List<Topic> getTopicsByPostId(long postId);
 
-    Optional<Topic> getTopicsById(int topicId);
+    Optional<Topic> getTopicsById(long topicId);
 
-    Pair<Long, Long> getStatistics(int topicId);
+    Pair<Long, Long> getStatistics(long topicId);
 
     boolean isValidTopic(Board anonymousPost, Set<Long> topicIds);
 }

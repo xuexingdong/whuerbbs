@@ -41,12 +41,12 @@ public class TopicServiceImpl implements TopicService {
     }
 
     @Override
-    public Optional<Topic> getTopicsById(int topicId) {
+    public Optional<Topic> getTopicsById(long topicId) {
         return topicMapper.selectById(topicId);
     }
 
     @Override
-    public Pair<Long, Long> getStatistics(int topicId) {
+    public Pair<Long, Long> getStatistics(long topicId) {
         var resultMap = topicMapper.getParticipateUserCountAndDiscussionMountById(topicId);
         return Pair.of(Long.parseLong(String.valueOf(resultMap.get("count1"))), Long.parseLong(String.valueOf(resultMap.get("count2"))));
     }

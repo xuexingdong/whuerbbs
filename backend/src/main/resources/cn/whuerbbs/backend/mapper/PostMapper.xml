@@ -107,7 +107,7 @@
         and deleted = 0) p
         join user u on p.user_id = u.id
     </select>
-    <select id="selectPostIdsByTopicId" resultMap="postResult">
+    <select id="selectPostsByTopicId" resultMap="postResult">
         select p.id pid,
                p.title,
                p.content,

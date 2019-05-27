@@ -72,7 +72,7 @@ public class PostControllerV1 {
     @GetMapping("posts")
     public Page<PostListVO> getPosts(
             @RequestParam(required = false) Board board,
-            @RequestParam(value = "topic_id", required = false) Integer topicId,
+            @RequestParam(value = "topic_id", required = false) Long topicId,
             @RequestParam(value = "hot", required = false) boolean hot,
             @Range(min = 1, max = Integer.MAX_VALUE) @RequestParam(defaultValue = "1") int page,
             @Range(min = 1, max = 100) @RequestParam(value = "per_page", defaultValue = "10") int perPage,

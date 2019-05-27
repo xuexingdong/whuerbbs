@@ -24,9 +24,9 @@ public interface PostMapper {
 
     List<Post> selectByIds(List<Long> ids);
 
-    List<Post> selectPostIdsByTopicId(int topicId);
+    List<Post> selectPostsByTopicId(long topicId);
 
-    List<Post> selectHotPostIdsByTopicId(int topicId);
+    List<Post> selectHotPostIdsByTopicId(long topicId);
 
     int deleteById(long id);
 }

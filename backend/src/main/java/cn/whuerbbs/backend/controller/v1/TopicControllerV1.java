@@ -41,7 +41,7 @@ public class TopicControllerV1 {
      * @return
      */
     @GetMapping("{topicId}")
-    public TopicDetailVO getTopicsByBoard(@PathVariable int topicId) {
+    public TopicDetailVO getTopicsByBoard(@NotNull @PathVariable Long topicId) {
         var topicOptional = topicService.getTopicsById(topicId);
         var topic = topicOptional.orElseThrow(() -> new BusinessException("帖子不存在"));
         var pair = topicService.getStatistics(topicId);
