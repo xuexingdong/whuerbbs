@@ -3,10 +3,8 @@ package cn.whuerbbs.backend.dto;
 import org.hibernate.validator.constraints.Length;
 
 import javax.validation.constraints.NotEmpty;
-import javax.validation.constraints.NotNull;
 
 public class CommentDTO {
-    @NotNull
     private Long postId;
     @NotEmpty
     @Length(max = 300)

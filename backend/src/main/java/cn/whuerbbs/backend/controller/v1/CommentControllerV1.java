@@ -5,6 +5,7 @@ import cn.whuerbbs.backend.common.CurrentUserData;
 import cn.whuerbbs.backend.dto.CommentDTO;
 import cn.whuerbbs.backend.enumeration.AttitudeStatus;
 import cn.whuerbbs.backend.enumeration.AttitudeTarget;
+import cn.whuerbbs.backend.exception.BusinessException;
 import cn.whuerbbs.backend.model.Comment;
 import cn.whuerbbs.backend.service.AttitudeService;
 import cn.whuerbbs.backend.service.CommentService;
@@ -19,6 +20,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.constraints.NotNull;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 @RestController
@@ -102,6 +104,10 @@ public class CommentControllerV1 {
 
     @PostMapping("comments")
     public void addComment(@Validated @RequestBody CommentDTO commentDTO, @CurrentUser CurrentUserData currentUserData) {
+        // postId和parentId不能同时为空
+        if (Objects.isNull(commentDTO.getPostId()) && commentDTO.getParentId() == 0) {
+            throw new BusinessException("非法请求");
+        }
         commentService.commentPost(currentUserData.getUserId(), commentDTO);
     }
 
