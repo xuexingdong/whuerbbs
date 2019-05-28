@@ -68,7 +68,7 @@ public class AttitudeServiceImpl implements AttitudeService {
                 // 一级评论
                 if (comment.getParentId() == 0) {
                     notification.setType(NotificationType.COMMENT_LIKED);
-                    notification.setReferenceId(String.valueOf(comment.getPostId()));
+                    notification.setReferenceId(String.valueOf(comment.getId()));
                 }
                 // 二级评论
                 else {
