@@ -8,8 +8,10 @@
         <association property="fromUser" javaType="User" autoMapping="true"/>
     </resultMap>
     <insert id="insert">
-        insert into notification (id, type, reference_id, content, from_user_id, to_user_id, be_read, created_at)
-        values (#{id}, #{type}, #{referenceId}, #{content}, #{fromUserId}, #{toUserId}, #{beRead}, #{createdAt})
+        insert into notification (id, type, reference_id, summary, content, from_user_id, to_user_id, be_read,
+                                  created_at)
+        values (#{id}, #{type}, #{referenceId}, #{summary}, #{content}, #{fromUserId}, #{toUserId}, #{beRead},
+                #{createdAt})
     </insert>
     <select id="selectByToUserIdPageable" resultMap="notificationResult">
         select n.id nid,
