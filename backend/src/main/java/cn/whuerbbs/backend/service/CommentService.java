@@ -15,7 +15,7 @@ public interface CommentService {
 
     List<Comment> getHotComments(long postId);
 
-    Optional<Comment> getCommentById(long commentId);
+    Comment getCommentById(long commentId);
 
     List<Comment> getCommentsByParentId(long parentCommentId);
 

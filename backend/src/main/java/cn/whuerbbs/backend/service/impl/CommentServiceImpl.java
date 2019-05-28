@@ -110,8 +110,8 @@ public class CommentServiceImpl implements CommentService {
     }
 
     @Override
-    public Optional<Comment> getCommentById(long commentId) {
-        return commentMapper.selectById(commentId);
+    public Comment getCommentById(long commentId) {
+        return commentMapper.selectById(commentId).orElseThrow(() -> new NotExistsException("评论不存在"));
     }
 
     @Override

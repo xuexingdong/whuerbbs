@@ -43,6 +43,10 @@ public class CommentControllerV1 {
     @DeleteMapping("comments/{commentId}")
     public void deleteComment(@NotNull @PathVariable Long commentId,
                               @CurrentUser CurrentUserData currentUserData) {
+        var comment = commentService.getCommentById(commentId);
+        if (!comment.getUserId().equals(currentUserData.getUserId())) {
+            throw new NotExistsException("无权删除评论");
+        }
         commentService.deleteCommentById(commentId);
     }
 
@@ -56,8 +60,8 @@ public class CommentControllerV1 {
     @GetMapping("comments/{commentId}")
     public CommentListVO getCommentDetail(@NotNull @PathVariable Long commentId,
                                           @CurrentUser CurrentUserData currentUserData) {
-        var commentOptional = commentService.getCommentById(commentId);
-        return getCommentDetailVO(commentOptional.orElseThrow(() -> new NotExistsException("评论不存在")), currentUserData);
+        var comment = commentService.getCommentById(commentId);
+        return getCommentDetailVO(comment, currentUserData);
     }
 
     /**

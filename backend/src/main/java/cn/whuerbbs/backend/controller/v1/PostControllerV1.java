@@ -110,6 +110,10 @@ public class PostControllerV1 {
 
     @DeleteMapping("posts/{postId}")
     public void delete(@NotNull @PathVariable Long postId, @CurrentUser CurrentUserData currentUserData) {
+        var post = postService.getById(postId);
+        if (!post.getUserId().equals(currentUserData.getUserId())) {
+            throw new BusinessException("无权删除帖子");
+        }
         postService.deleteById(postId);
     }
 
