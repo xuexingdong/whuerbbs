@@ -32,7 +32,7 @@ public class NotificationServiceImpl implements NotificationService {
 
     @Override
     public Page<Notification> getPageable(String userId, Pageable pageable) {
-        PageHelper.startPage(pageable.getPageNumber(), pageable.getPageSize());
+        PageHelper.startPage(pageable.getPageNumber() + 1, pageable.getPageSize());
         var notifications = notificationMapper.selectByToUserIdPageable(userId);
         // 设置所有消息为已读
         notificationMapper.setAllRead(userId);

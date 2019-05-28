@@ -30,7 +30,7 @@ public class NotificationControllerV1 {
         var pageRequest = PageRequest.of(page - 1, perPage);
         var notificationPage = notificationService.getPageable(currentUserData.getUserId(), pageRequest);
         return notificationPage.map(notification -> {
-            var pair = notificationService.getBoardSummary(notification);
+            var pair = notificationService.getBoardAndSummary(notification);
             return new NotificationVO(notification, pair.getLeft(), pair.getRight());
         });
     }

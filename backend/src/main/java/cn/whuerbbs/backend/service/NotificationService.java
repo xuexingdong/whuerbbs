@@ -11,5 +11,5 @@ public interface NotificationService {
 
     long countUnreadByUserId(String userId);
 
-    Pair<Board, String> getBoardSummary(Notification notification);
+    Pair<Board, String> getBoardAndSummary(Notification notification);
 }
