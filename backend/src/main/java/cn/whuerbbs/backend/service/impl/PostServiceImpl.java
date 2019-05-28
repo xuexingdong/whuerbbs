@@ -95,7 +95,7 @@ public class PostServiceImpl implements PostService {
     public Page<Post> getPageableByBoard(Board board, Pageable pageable) {
         var post = new Post();
         post.setBoard(board);
-        PageHelper.startPage(pageable.getPageNumber(), pageable.getPageSize());
+        PageHelper.startPage(pageable.getPageNumber() + 1, pageable.getPageSize());
         var posts = postMapper.selectPageable(post);
         var pageInfo = new PageInfo<>(posts);
         return new PageImpl<>(posts, pageable, pageInfo.getTotal());
@@ -108,7 +108,7 @@ public class PostServiceImpl implements PostService {
 
     @Override
     public Page<Post> getPostsPageableByTopicId(long topicId, Pageable pageable) {
-        PageHelper.startPage(pageable.getPageNumber(), pageable.getPageSize());
+        PageHelper.startPage(pageable.getPageNumber() + 1, pageable.getPageSize());
         var posts = postMapper.selectPostsByTopicId(topicId);
         var pageInfo = new PageInfo<>(posts);
         return new PageImpl<>(posts, pageable, pageInfo.getTotal());
@@ -116,7 +116,7 @@ public class PostServiceImpl implements PostService {
 
     @Override
     public Page<Post> getHotPostsPageableByTopicId(long topicId, Pageable pageable) {
-        PageHelper.startPage(pageable.getPageNumber(), pageable.getPageSize());
+        PageHelper.startPage(pageable.getPageNumber() + 1, pageable.getPageSize());
         var posts = postMapper.selectHotPostIdsByTopicId(topicId);
         var pageInfo = new PageInfo<>(posts);
         return new PageImpl<>(posts, pageable, pageInfo.getTotal());

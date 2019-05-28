@@ -49,7 +49,7 @@ public class PostCollectionServiceImpl implements PostCollectionService {
 
     @Override
     public Page<PostCollection> getPageable(String userId, Pageable pageable) {
-        PageHelper.startPage(pageable.getPageNumber(), pageable.getPageSize());
+        PageHelper.startPage(pageable.getPageNumber() + 1, pageable.getPageSize());
         var postCollections = postCollectionMapper.selectPageable(userId);
         var pageInfo = new PageInfo<>(postCollections);
         return new PageImpl<>(postCollections, pageable, pageInfo.getTotal());

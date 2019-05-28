@@ -37,7 +37,7 @@ public class CommentServiceImpl implements CommentService {
 
     @Override
     public Page<Comment> getPageable(long postId, Pageable pageable) {
-        PageHelper.startPage(pageable.getPageNumber(), pageable.getPageSize());
+        PageHelper.startPage(pageable.getPageNumber() + 1, pageable.getPageSize());
         var comments = commentMapper.selectByPostIdPageable(postId);
         var pageInfo = new PageInfo<>(comments);
         return new PageImpl<>(comments, pageable, pageInfo.getTotal());
@@ -128,7 +128,7 @@ public class CommentServiceImpl implements CommentService {
 
     @Override
     public Page<Comment> getSubCommentsPageable(long commentId, Pageable pageable) {
-        PageHelper.startPage(pageable.getPageNumber(), pageable.getPageSize());
+        PageHelper.startPage(pageable.getPageNumber() + 1, pageable.getPageSize());
         var comments = commentMapper.selectByParentId(commentId);
         var pageInfo = new PageInfo<>(comments);
         return new PageImpl<>(comments, pageable, pageInfo.getTotal());
