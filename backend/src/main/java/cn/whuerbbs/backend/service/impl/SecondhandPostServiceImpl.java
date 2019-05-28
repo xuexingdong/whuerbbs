@@ -10,6 +10,7 @@ import cn.whuerbbs.backend.mapper.TopicMapper;
 import cn.whuerbbs.backend.model.Post;
 import cn.whuerbbs.backend.model.SecondhandPost;
 import cn.whuerbbs.backend.model.Topic;
+import cn.whuerbbs.backend.service.PostAttachmentService;
 import cn.whuerbbs.backend.service.SecondhandPostService;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,6 +38,9 @@ public class SecondhandPostServiceImpl implements SecondhandPostService {
     @Autowired
     private TopicMapper topicMapper;
 
+    @Autowired
+    private PostAttachmentService postAttachmentService;
+
     @Override
     public void publish(String userId, SecondhandPostDTO secondHandPostDTO) {
         var now = LocalDateTime.now();
@@ -47,6 +51,8 @@ public class SecondhandPostServiceImpl implements SecondhandPostService {
         post.setCreatedAt(now);
         post.setLastActiveAt(now);
         postMapper.insert(post);
+
+        postAttachmentService.addAll(post.getId(), secondHandPostDTO.getImages());
 
         var secondhandPost = new SecondhandPost();
         secondhandPost.setPostId(post.getId());

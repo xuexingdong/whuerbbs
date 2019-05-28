@@ -9,6 +9,7 @@ import cn.whuerbbs.backend.mapper.PostTopicMapper;
 import cn.whuerbbs.backend.model.AnonymousPost;
 import cn.whuerbbs.backend.model.Post;
 import cn.whuerbbs.backend.service.AnonymousPostService;
+import cn.whuerbbs.backend.service.PostAttachmentService;
 import cn.whuerbbs.backend.service.TopicService;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,6 +37,9 @@ public class AnonymousPostServiceImpl implements AnonymousPostService {
     @Autowired
     private AnonymousPostMapper anonymousPostMapper;
 
+    @Autowired
+    private PostAttachmentService postAttachmentService;
+
     @Override
     public void publish(String userId, AnonymousPostDTO anonymousPostDTO) {
         var now = LocalDateTime.now();
@@ -46,6 +50,8 @@ public class AnonymousPostServiceImpl implements AnonymousPostService {
         post.setCreatedAt(now);
         post.setLastActiveAt(now);
         postMapper.insert(post);
+
+        postAttachmentService.addAll(post.getId(), anonymousPostDTO.getImages());
 
         var anonymousPost = new AnonymousPost();
         anonymousPost.setPostId(post.getId());

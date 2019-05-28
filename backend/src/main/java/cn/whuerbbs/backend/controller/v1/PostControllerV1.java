@@ -7,7 +7,6 @@ import cn.whuerbbs.backend.enumeration.AttitudeStatus;
 import cn.whuerbbs.backend.enumeration.AttitudeTarget;
 import cn.whuerbbs.backend.enumeration.Board;
 import cn.whuerbbs.backend.exception.BusinessException;
-import cn.whuerbbs.backend.exception.NotExistsException;
 import cn.whuerbbs.backend.model.Post;
 import cn.whuerbbs.backend.service.*;
 import cn.whuerbbs.backend.util.ImageUtil;

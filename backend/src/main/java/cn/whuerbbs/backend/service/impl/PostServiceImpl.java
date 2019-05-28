@@ -4,11 +4,14 @@ import cn.whuerbbs.backend.dto.PostDTO;
 import cn.whuerbbs.backend.enumeration.Board;
 import cn.whuerbbs.backend.exception.BusinessException;
 import cn.whuerbbs.backend.exception.NotExistsException;
-import cn.whuerbbs.backend.mapper.*;
+import cn.whuerbbs.backend.mapper.AnonymousPostMapper;
+import cn.whuerbbs.backend.mapper.CommentMapper;
+import cn.whuerbbs.backend.mapper.PostMapper;
+import cn.whuerbbs.backend.mapper.PostTopicMapper;
 import cn.whuerbbs.backend.model.Post;
-import cn.whuerbbs.backend.model.PostAttachment;
 import cn.whuerbbs.backend.model.User;
 import cn.whuerbbs.backend.service.AttachmentService;
+import cn.whuerbbs.backend.service.PostAttachmentService;
 import cn.whuerbbs.backend.service.PostService;
 import cn.whuerbbs.backend.service.TopicService;
 import cn.whuerbbs.backend.util.ImageUtil;
@@ -26,7 +29,6 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
-import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -50,7 +52,7 @@ public class PostServiceImpl implements PostService {
     private PostTopicMapper postTopicMapper;
 
     @Autowired
-    private PostAttachmentMapper postAttachmentMapper;
+    private PostAttachmentService postAttachmentService;
 
     @Autowired
     private AnonymousPostMapper anonymousPostMapper;
@@ -73,15 +75,8 @@ public class PostServiceImpl implements PostService {
         post.setLastActiveAt(post.getCreatedAt());
         postMapper.insert(post);
 
-        var postAttachments = postDTO.getImages().stream().map(attachmentId -> {
-            var postAttachment = new PostAttachment();
-            postAttachment.setPostId(post.getId());
-            postAttachment.setAttachmentId(attachmentId);
-            return postAttachment;
-        }).collect(Collectors.toList());
-        if (!postAttachments.isEmpty()) {
-            postAttachmentMapper.insertBatch(postAttachments);
-        }
+        postAttachmentService.addAll(post.getId(), postDTO.getImages());
+
         if (Objects.nonNull(postDTO.getTopicId())) {
             var topicIds = Set.of(postDTO.getTopicId());
             if (topicService.isValidTopic(post.getBoard(), topicIds)) {
