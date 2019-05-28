@@ -51,7 +51,6 @@ public class NotificationServiceImpl implements NotificationService {
             case POST_LIKED:
                 final var postOptional = postMapper.selectById(Long.parseLong(notification.getReferenceId()));
                 if (postOptional.isPresent()) {
-                    String title = postOptional.get().getTitle();
                     board = postOptional.get().getBoard();
                 }
                 break;

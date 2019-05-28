@@ -71,16 +71,13 @@ public class AttitudeServiceImpl implements AttitudeService {
                 // 一级评论
                 if (comment.getParentId() == 0) {
                     notification.setType(NotificationType.COMMENT_LIKED);
-                    summary = comment.getContent().substring(0, Math.min(Constants.NOTIFICATION_SUMMARY_LENGTH, comment.getContent().length()));
                 }
                 // 二级评论
                 else {
                     notification.setType(NotificationType.SUB_COMMENT_LIKED);
-                    var parentCommentOptional = commentMapper.selectById(comment.getParentId());
-                    var parentComment = parentCommentOptional.orElseThrow(() -> new BusinessException("父评论不存在"));
-                    summary = parentComment.getContent().substring(0, Math.min(Constants.NOTIFICATION_SUMMARY_LENGTH, parentComment.getContent().length()));
                 }
-                notification.setReferenceId(String.valueOf(comment.getId()));
+                summary = comment.getContent().substring(0, Math.min(Constants.NOTIFICATION_SUMMARY_LENGTH, comment.getContent().length()));
+                notification.setReferenceId(String.valueOf(comment.getPostId()));
                 notification.setToUserId(comment.getUserId());
                 break;
             default:
