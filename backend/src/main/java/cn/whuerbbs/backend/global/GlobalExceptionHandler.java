@@ -9,10 +9,9 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.multipart.MaxUploadSizeExceededException;
 
 import javax.validation.ConstraintViolationException;
-import java.util.HashMap;
-import java.util.Map;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
@@ -40,12 +39,16 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(BusinessException.class)
-    public Map<String, Object> error(BusinessException ex) {
+    public BusinessException error(BusinessException ex) {
         logger.error("{}", ex.getMessage());
-        Map<String, Object> map = new HashMap<>();
-        map.put("code", ex.getCode());
-        map.put("message", ex.getMessage());
-        return map;
+        return ex;
+    }
+
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(MaxUploadSizeExceededException.class)
+    public BusinessException serverError(MaxUploadSizeExceededException ex) {
+        logger.error("{}", ex);
+        return new BusinessException("图片大小不能超过3M");
     }
 
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)

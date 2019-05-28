@@ -52,6 +52,13 @@ public final class Resp<T> {
         return resp;
     }
 
+    public static Resp error(String message) {
+        var resp = new Resp();
+        resp.code = -1;
+        resp.message = message;
+        return resp;
+    }
+
     public static Resp internalServerError() {
         return internalServerError(HttpStatus.INTERNAL_SERVER_ERROR.name());
     }

@@ -1,5 +1,6 @@
 package cn.whuerbbs.backend.global;
 
+import cn.whuerbbs.backend.exception.BusinessException;
 import org.springframework.core.MethodParameter;
 import org.springframework.data.domain.Page;
 import org.springframework.http.MediaType;
@@ -27,8 +28,8 @@ public class GlobalResponseBodyAdvice implements ResponseBodyAdvice<Object> {
             response.getHeaders().set("X-TOTAL-COUNT", String.valueOf(((Page) body).getTotalElements()));
             return Resp.data(((Page) body).getContent());
         }
-        if (body instanceof String) {
-            return body;
+        if (body instanceof BusinessException) {
+            return Resp.error(((BusinessException) body).getMessage());
         }
         return Resp.data(body);
     }
