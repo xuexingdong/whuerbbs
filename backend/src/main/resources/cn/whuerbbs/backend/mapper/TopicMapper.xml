@@ -42,7 +42,7 @@
           and deleted = 0
     </select>
     <select id="getParticipateUserCountAndDiscussionMountById" resultType="map">
-        select count(1) count1, sum(p.comment_count) count2
+        select count(1) count1, ifnull(sum(p.comment_count), 0) count2
         from topic t
                  join post_topic pt on t.id = pt.topic_id
                  join post p on p.id = pt.post_id
