@@ -46,20 +46,22 @@ public class NotificationServiceImpl implements NotificationService {
     }
 
     @Override
-    public Pair<Board, String> getBoardSummary(Notification notification) {
+    public Pair<Board, String> getBoardAndSummary(Notification notification) {
         String summary = null;
         Board board = null;
         switch (notification.getType()) {
+            case POST_COMMENTED:
             case POST_LIKED:
                 final var postOptional = postMapper.selectById(Long.parseLong(notification.getReferenceId()));
                 if (postOptional.isPresent()) {
+                    String title = postOptional.get().getTitle();
                     board = postOptional.get().getBoard();
-                    summary = postOptional.get().getTitle().substring(0, Math.min(Constants.NOTIFICATION_SUMMARY_LENGTH, postOptional.get().getTitle().length()));
+                    summary = title.substring(0, Math.min(Constants.NOTIFICATION_SUMMARY_LENGTH, title.length()));
                 }
                 break;
-            case POST_COMMENTED:
             case COMMENT_LIKED:
             case COMMENT_REPLIED:
+            case SUB_COMMENT_LIKED:
                 var commentOptional = commentMapper.selectById(Long.parseLong(notification.getReferenceId()));
                 if (commentOptional.isPresent()) {
                     var comment = commentOptional.get();
