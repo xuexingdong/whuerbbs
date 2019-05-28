@@ -73,7 +73,7 @@ public class CommentControllerV1 {
                                            @Range(min = 1, max = 100) @RequestParam(value = "per_page", defaultValue = "10") int perPage,
                                            @NotNull @RequestParam("post_id") Long postId,
                                            @CurrentUser CurrentUserData currentUserData) {
-        var pageRequest = PageRequest.of(page, perPage);
+        var pageRequest = PageRequest.of(page - 1, perPage);
         var commentPage = commentService.getPageable(postId, pageRequest);
         return commentPage.map(comment -> getCommentListVO(comment, currentUserData));
     }
@@ -92,9 +92,9 @@ public class CommentControllerV1 {
                                           @Range(min = 1, max = 100) @RequestParam(value = "per_page", defaultValue = "10") int perPage,
                                           @NotNull @RequestParam("comment_id") Long commentId,
                                           @CurrentUser CurrentUserData currentUserData) {
-        var pageRequest = PageRequest.of(page, perPage);
-        var pageable = commentService.getSubCommentsPageable(commentId, pageRequest);
-        return pageable.map(comment -> getCommentVO(comment, currentUserData));
+        var pageRequest = PageRequest.of(page - 1, perPage);
+        var commentPage = commentService.getSubCommentsPageable(commentId, pageRequest);
+        return commentPage.map(comment -> getCommentVO(comment, currentUserData));
     }
 
     @GetMapping("hot_comments")
@@ -122,9 +122,10 @@ public class CommentControllerV1 {
     }
 
     private CommentListVO getCommentListVO(Comment comment, CurrentUserData currentUserData) {
-        var subCommentPage = commentService.getSubCommentsPageable(comment.getId(), PageRequest.of(1, 2));
+        var subCommentPage = commentService.getSubCommentsPageable(comment.getId(), PageRequest.of(0, 2));
+        long total = subCommentPage.getTotalElements();
         var subCommentsVO = subCommentPage.stream().map(c -> this.getCommentVO(c, currentUserData)).collect(Collectors.toList());
-        var vo = new CommentListVO(comment, subCommentsVO, subCommentPage.getTotalElements(), currentUserData);
+        var vo = new CommentListVO(comment, subCommentsVO, total, currentUserData);
         vo.setAttitudeStatus(attitudeService.getAttitudeStatus(currentUserData.getUserId(), AttitudeTarget.COMMENT, String.valueOf(comment.getId())));
         return vo;
     }

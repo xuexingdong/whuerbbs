@@ -93,9 +93,9 @@ public class PostServiceImpl implements PostService {
 
     @Override
     public Page<Post> getPageableByBoard(Board board, Pageable pageable) {
-        PageHelper.startPage(pageable.getPageNumber(), pageable.getPageSize());
         var post = new Post();
         post.setBoard(board);
+        PageHelper.startPage(pageable.getPageNumber(), pageable.getPageSize());
         var posts = postMapper.selectPageable(post);
         var pageInfo = new PageInfo<>(posts);
         return new PageImpl<>(posts, pageable, pageInfo.getTotal());

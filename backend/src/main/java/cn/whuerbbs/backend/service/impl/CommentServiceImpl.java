@@ -8,6 +8,7 @@ import cn.whuerbbs.backend.mapper.NotificationMapper;
 import cn.whuerbbs.backend.mapper.PostMapper;
 import cn.whuerbbs.backend.model.Comment;
 import cn.whuerbbs.backend.model.Notification;
+import cn.whuerbbs.backend.model.Post;
 import cn.whuerbbs.backend.service.CommentService;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
@@ -44,9 +45,30 @@ public class CommentServiceImpl implements CommentService {
 
     @Override
     public void commentPost(String userId, CommentDTO commentDTO) {
+        NotificationType notificationType;
+        String toUserId;
+        String referenceId;
+        Post post;
+        // 一级评论
+        if (commentDTO.getParentId() == 0) {
+            var postOptional = postMapper.selectById(commentDTO.getPostId());
+            post = postOptional.orElseThrow(() -> new BusinessException("帖子不存在"));
+            notificationType = NotificationType.POST_COMMENTED;
+            referenceId = String.valueOf(post.getId());
+            toUserId = post.getUserId();
+        }
+        // 二级评论
+        else {
+            var parentCommentOptional = commentMapper.selectById(commentDTO.getParentId());
+            var parentComment = parentCommentOptional.orElseThrow(() -> new BusinessException("父评论不存在"));
+            commentDTO.setPostId(parentComment.getPostId());
+            notificationType = NotificationType.COMMENT_REPLIED;
+            // 帖子被回复时，返回一级评论id
+            referenceId = String.valueOf(commentDTO.getParentId());
+            toUserId = parentComment.getUserId();
+        }
+
         var now = LocalDateTime.now();
-        var postOptional = postMapper.selectById(commentDTO.getPostId());
-        var post = postOptional.orElseThrow(() -> new BusinessException("帖子不存在"));
         // 评论数
         postMapper.updateCommentCount(commentDTO.getPostId(), 1);
         // 帖子活跃时间
@@ -59,26 +81,6 @@ public class CommentServiceImpl implements CommentService {
         comment.setUserId(userId);
         comment.setCreatedAt(now);
         commentMapper.insert(comment);
-
-        NotificationType notificationType;
-        String toUserId;
-        String referenceId;
-        // 一级评论
-        if (commentDTO.getParentId() == 0) {
-            notificationType = NotificationType.POST_COMMENTED;
-            referenceId = String.valueOf(post.getId());
-            toUserId = post.getUserId();
-        }
-        // 二级评论评论，postId以子评论为主，忽略传入参数的postId
-        else {
-            var parentCommentOptional = commentMapper.selectById(commentDTO.getParentId());
-            var parentComment = parentCommentOptional.orElseThrow(() -> new BusinessException("父评论不存在"));
-            commentDTO.setPostId(parentComment.getPostId());
-            notificationType = NotificationType.COMMENT_REPLIED;
-            // 帖子被回复时，返回一级评论id
-            referenceId = String.valueOf(commentDTO.getParentId());
-            toUserId = parentComment.getUserId();
-        }
 
         // 通知的发起者永远是唤起接口的人
         // 当帖子所有者不是自己的时候，才发送通知

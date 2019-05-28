@@ -27,7 +27,7 @@ public class NotificationControllerV1 {
             @Range(min = 1, max = Integer.MAX_VALUE) @RequestParam(defaultValue = "1") int page,
             @Range(min = 1, max = 100) @RequestParam(value = "per_page", defaultValue = "10") int perPage,
             @CurrentUser CurrentUserData currentUserData) {
-        var pageRequest = PageRequest.of(page, perPage);
+        var pageRequest = PageRequest.of(page - 1, perPage);
         var notificationPage = notificationService.getPageable(currentUserData.getUserId(), pageRequest);
         return notificationPage.map(notification -> {
             var pair = notificationService.getBoardSummary(notification);

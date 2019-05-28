@@ -77,7 +77,7 @@ public class PostControllerV1 {
             @Range(min = 1, max = Integer.MAX_VALUE) @RequestParam(defaultValue = "1") int page,
             @Range(min = 1, max = 100) @RequestParam(value = "per_page", defaultValue = "10") int perPage,
             @CurrentUser CurrentUserData currentUserData) {
-        var pageRequest = PageRequest.of(page, perPage);
+        var pageRequest = PageRequest.of(page - 1, perPage);
         Page<Post> postPage;
         // 按版块查询
         if (Objects.nonNull(topicId)) {

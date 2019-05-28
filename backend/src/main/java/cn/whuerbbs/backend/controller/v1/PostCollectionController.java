@@ -44,7 +44,7 @@ public class PostCollectionController {
             @Range(min = 1, max = Integer.MAX_VALUE) @RequestParam(defaultValue = "1") int page,
             @Range(min = 1, max = 100) @RequestParam(value = "per_page", defaultValue = "10") int perPage,
             @CurrentUser CurrentUserData currentUserData) {
-        var pageRequest = PageRequest.of(page, perPage);
+        var pageRequest = PageRequest.of(page - 1, perPage);
         var postCollectionPage = postCollectionService.getPageable(currentUserData.getUserId(), pageRequest);
         List<PostListVO> postListVOs = postService.getPostListVO(postCollectionPage.stream().map(PostCollection::getPostId).collect(Collectors.toList()));
         return new PageImpl<>(postListVOs, postCollectionPage.getPageable(), postCollectionPage.getTotalElements());
