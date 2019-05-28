@@ -4,7 +4,7 @@ import cn.whuerbbs.backend.common.Constants;
 import cn.whuerbbs.backend.enumeration.AttitudeStatus;
 import cn.whuerbbs.backend.enumeration.AttitudeTarget;
 import cn.whuerbbs.backend.enumeration.NotificationType;
-import cn.whuerbbs.backend.exception.BusinessException;
+import cn.whuerbbs.backend.exception.NotExistsException;
 import cn.whuerbbs.backend.mapper.AttitudeMapper;
 import cn.whuerbbs.backend.mapper.CommentMapper;
 import cn.whuerbbs.backend.mapper.NotificationMapper;
@@ -59,7 +59,7 @@ public class AttitudeServiceImpl implements AttitudeService {
                 postMapper.updateLikeCount(Long.parseLong(attitude.getTargetId()), 1);
                 notification.setType(NotificationType.POST_LIKED);
                 var postOptional = postMapper.selectById(Integer.parseInt(targetId));
-                var post = postOptional.orElseThrow(() -> new BusinessException("帖子不存在"));
+                var post = postOptional.orElseThrow(() -> new NotExistsException("帖子不存在"));
                 summary = post.getTitle().substring(0, Math.min(Constants.NOTIFICATION_SUMMARY_LENGTH, post.getTitle().length()));
                 notification.setReferenceId(String.valueOf(post.getId()));
                 notification.setToUserId(post.getUserId());
@@ -67,7 +67,7 @@ public class AttitudeServiceImpl implements AttitudeService {
             case COMMENT:
                 commentMapper.updateLikeCount(Long.parseLong(attitude.getTargetId()), 1);
                 var commentOptional = commentMapper.selectById(Integer.parseInt(targetId));
-                var comment = commentOptional.orElseThrow(() -> new BusinessException("评论不存在"));
+                var comment = commentOptional.orElseThrow(() -> new NotExistsException("评论不存在"));
                 // 一级评论被点赞，跳转到帖子详情页
                 if (comment.getParentId() == 0) {
                     notification.setType(NotificationType.COMMENT_LIKED);
@@ -82,7 +82,8 @@ public class AttitudeServiceImpl implements AttitudeService {
                 notification.setToUserId(comment.getUserId());
                 break;
             default:
-                throw new BusinessException("不支持");
+                TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+                return;
         }
         // 发送通知和接收通知的不是同一个人
         if (!userId.equals(notification.getToUserId())) {
@@ -117,7 +118,7 @@ public class AttitudeServiceImpl implements AttitudeService {
                     commentMapper.updateLikeCount(Long.parseLong(attitude.getTargetId()), -1);
                     break;
                 default:
-                    throw new BusinessException("不支持");
+                    TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
             }
         }
     }

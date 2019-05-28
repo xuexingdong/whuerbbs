@@ -6,6 +6,7 @@ import cn.whuerbbs.backend.dto.CommentDTO;
 import cn.whuerbbs.backend.enumeration.AttitudeStatus;
 import cn.whuerbbs.backend.enumeration.AttitudeTarget;
 import cn.whuerbbs.backend.exception.BusinessException;
+import cn.whuerbbs.backend.exception.NotExistsException;
 import cn.whuerbbs.backend.model.Comment;
 import cn.whuerbbs.backend.service.AttitudeService;
 import cn.whuerbbs.backend.service.CommentService;
@@ -55,8 +56,8 @@ public class CommentControllerV1 {
     @GetMapping("comments/{commentId}")
     public CommentListVO getCommentDetail(@NotNull @PathVariable Long commentId,
                                           @CurrentUser CurrentUserData currentUserData) {
-        var comment = commentService.getCommentById(commentId);
-        return getCommentDetailVO(comment, currentUserData);
+        var commentOptional = commentService.getCommentById(commentId);
+        return getCommentDetailVO(commentOptional.orElseThrow(() -> new NotExistsException("评论不存在")), currentUserData);
     }
 
     /**

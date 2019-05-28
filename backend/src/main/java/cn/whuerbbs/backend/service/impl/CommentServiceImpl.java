@@ -3,7 +3,7 @@ package cn.whuerbbs.backend.service.impl;
 import cn.whuerbbs.backend.common.Constants;
 import cn.whuerbbs.backend.dto.CommentDTO;
 import cn.whuerbbs.backend.enumeration.NotificationType;
-import cn.whuerbbs.backend.exception.BusinessException;
+import cn.whuerbbs.backend.exception.NotExistsException;
 import cn.whuerbbs.backend.mapper.CommentMapper;
 import cn.whuerbbs.backend.mapper.NotificationMapper;
 import cn.whuerbbs.backend.mapper.PostMapper;
@@ -22,6 +22,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @Transactional(rollbackFor = Exception.class)
@@ -54,7 +55,7 @@ public class CommentServiceImpl implements CommentService {
         // 一级评论
         if (commentDTO.getParentId() == 0) {
             var postOptional = postMapper.selectById(commentDTO.getPostId());
-            post = postOptional.orElseThrow(() -> new BusinessException("帖子不存在"));
+            post = postOptional.orElseThrow(() -> new NotExistsException("帖子不存在"));
             notificationType = NotificationType.POST_COMMENTED;
             summary = post.getTitle().substring(0, Math.min(Constants.NOTIFICATION_SUMMARY_LENGTH, post.getTitle().length()));
             referenceId = String.valueOf(post.getId());
@@ -63,7 +64,7 @@ public class CommentServiceImpl implements CommentService {
         // 二级评论
         else {
             var parentCommentOptional = commentMapper.selectById(commentDTO.getParentId());
-            var parentComment = parentCommentOptional.orElseThrow(() -> new BusinessException("父评论不存在"));
+            var parentComment = parentCommentOptional.orElseThrow(() -> new NotExistsException("父评论不存在"));
             commentDTO.setPostId(parentComment.getPostId());
             notificationType = NotificationType.COMMENT_REPLIED;
             summary = parentComment.getContent().substring(0, Math.min(Constants.NOTIFICATION_SUMMARY_LENGTH, parentComment.getContent().length()));
@@ -109,8 +110,8 @@ public class CommentServiceImpl implements CommentService {
     }
 
     @Override
-    public Comment getCommentById(long commentId) {
-        return commentMapper.selectById(commentId).orElseThrow(() -> new BusinessException("评论不存在"));
+    public Optional<Comment> getCommentById(long commentId) {
+        return commentMapper.selectById(commentId);
     }
 
     @Override

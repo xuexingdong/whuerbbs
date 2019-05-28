@@ -28,8 +28,7 @@ public class UserControllerV1 {
 
     @GetMapping("/user")
     public SelfUserDetailVO getSelfProfile(@CurrentUser CurrentUserData currentUserData) {
-        var userOptional = userService.getById(currentUserData.getUserId());
-        var user = userOptional.orElseThrow(() -> new BusinessException("用户不存在"));
+        var user = userService.getById(currentUserData.getUserId());
         long unreadCount = notificationService.countUnreadByUserId(user.getId());
         return new SelfUserDetailVO(user, unreadCount);
     }
@@ -55,8 +54,7 @@ public class UserControllerV1 {
 
     @GetMapping("/users/{userId}")
     public UserDetailVO getUserProfile(@NotNull @PathVariable String userId, @CurrentUser CurrentUserData currentUserData) {
-        var userOptional = userService.getById(userId);
-        var user = userOptional.orElseThrow(() -> new BusinessException("用户不存在"));
+        var user = userService.getById(currentUserData.getUserId());
         return new UserDetailVO(user);
     }
 }

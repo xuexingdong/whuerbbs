@@ -7,6 +7,7 @@ import cn.whuerbbs.backend.enumeration.AttitudeStatus;
 import cn.whuerbbs.backend.enumeration.AttitudeTarget;
 import cn.whuerbbs.backend.enumeration.Board;
 import cn.whuerbbs.backend.exception.BusinessException;
+import cn.whuerbbs.backend.exception.NotExistsException;
 import cn.whuerbbs.backend.model.Post;
 import cn.whuerbbs.backend.service.*;
 import cn.whuerbbs.backend.util.ImageUtil;
@@ -54,7 +55,7 @@ public class PostControllerV1 {
     public void create(@Validated @RequestBody PostDTO postDTO, @CurrentUser CurrentUserData currentUserData) {
         // 特殊逻辑，走此接口不允许是二手区和匿名
         if (postDTO.getBoard() == Board.ANONYMOUS_POST || postDTO.getBoard() == Board.SECONDHAND) {
-            throw new BusinessException("参数错误");
+            throw new BusinessException("非法请求");
         }
         postService.create(currentUserData.getUserId(), postDTO);
     }
@@ -94,8 +95,7 @@ public class PostControllerV1 {
 
     @GetMapping("posts/{postId}")
     public PostVO getPostDetail(@NotNull @PathVariable Long postId, @CurrentUser CurrentUserData currentUserData) {
-        var postOptional = postService.getById(postId);
-        var post = postOptional.orElseThrow(() -> new BusinessException("帖子不存在"));
+        var post = postService.getById(postId);
         var attachments = attachmentService.getByPostId(post.getId());
         var topics = topicService.getTopicsByPostId(post.getId());
         // 匿名帖子要特殊处理

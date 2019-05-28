@@ -1,6 +1,7 @@
 package cn.whuerbbs.backend.service.impl;
 
 import cn.whuerbbs.backend.enumeration.Board;
+import cn.whuerbbs.backend.exception.NotExistsException;
 import cn.whuerbbs.backend.mapper.PostTopicMapper;
 import cn.whuerbbs.backend.mapper.TopicMapper;
 import cn.whuerbbs.backend.model.Topic;
@@ -41,8 +42,8 @@ public class TopicServiceImpl implements TopicService {
     }
 
     @Override
-    public Optional<Topic> getTopicsById(long topicId) {
-        return topicMapper.selectById(topicId);
+    public Topic getTopicsById(long topicId) {
+        return topicMapper.selectById(topicId).orElseThrow(() -> new NotExistsException("主题不存在"));
     }
 
     @Override

@@ -13,7 +13,7 @@ public interface TopicService {
 
     List<Topic> getTopicsByPostId(long postId);
 
-    Optional<Topic> getTopicsById(long topicId);
+    Topic getTopicsById(long topicId);
 
     Pair<Long, Long> getStatistics(long topicId);
 

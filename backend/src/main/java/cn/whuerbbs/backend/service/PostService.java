@@ -15,7 +15,7 @@ public interface PostService {
 
     Page<Post> getPageableByBoard(Board board, Pageable pageable);
 
-    Optional<Post> getById(long postId);
+    Post getById(long postId);
 
     Page<Post> getPostsPageableByTopicId(long topicId, Pageable pageable);
 

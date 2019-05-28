@@ -1,6 +1,6 @@
 package cn.whuerbbs.backend.service.impl;
 
-import cn.whuerbbs.backend.exception.BusinessException;
+import cn.whuerbbs.backend.exception.NotExistsException;
 import cn.whuerbbs.backend.mapper.PostCollectionMapper;
 import cn.whuerbbs.backend.mapper.PostMapper;
 import cn.whuerbbs.backend.model.PostCollection;
@@ -30,7 +30,7 @@ public class PostCollectionServiceImpl implements PostCollectionService {
 
     @Override
     public void collect(String userId, long postId) {
-        postMapper.selectById(postId).orElseThrow(() -> new BusinessException("帖子不存在"));
+        postMapper.selectById(postId).orElseThrow(() -> new NotExistsException("帖子不存在"));
         var postCollection = new PostCollection();
         postCollection.setUserId(userId);
         postCollection.setPostId(postId);

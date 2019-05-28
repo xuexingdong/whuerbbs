@@ -1,7 +1,6 @@
 package cn.whuerbbs.backend.controller.v1;
 
 import cn.whuerbbs.backend.enumeration.Board;
-import cn.whuerbbs.backend.exception.BusinessException;
 import cn.whuerbbs.backend.service.AttachmentService;
 import cn.whuerbbs.backend.service.TopicService;
 import cn.whuerbbs.backend.util.ImageUtil;
@@ -42,8 +41,7 @@ public class TopicControllerV1 {
      */
     @GetMapping("{topicId}")
     public TopicDetailVO getTopicsByBoard(@NotNull @PathVariable Long topicId) {
-        var topicOptional = topicService.getTopicsById(topicId);
-        var topic = topicOptional.orElseThrow(() -> new BusinessException("帖子不存在"));
+        var topic = topicService.getTopicsById(topicId);
         var pair = topicService.getStatistics(topicId);
         var attachmentOptional = attachmentService.getById(topic.getAttachmentId());
         return new TopicDetailVO(topic, attachmentOptional.map(attachment -> imageUtil.getFullPath(attachment.getPath())).orElse(null),

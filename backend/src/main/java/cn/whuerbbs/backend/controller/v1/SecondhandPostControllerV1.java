@@ -5,7 +5,7 @@ import cn.whuerbbs.backend.common.CurrentUserData;
 import cn.whuerbbs.backend.dto.SecondhandPostDTO;
 import cn.whuerbbs.backend.enumeration.AttitudeTarget;
 import cn.whuerbbs.backend.enumeration.Board;
-import cn.whuerbbs.backend.exception.BusinessException;
+import cn.whuerbbs.backend.exception.NotExistsException;
 import cn.whuerbbs.backend.model.Post;
 import cn.whuerbbs.backend.service.*;
 import cn.whuerbbs.backend.util.ImageUtil;
@@ -87,7 +87,7 @@ public class SecondhandPostControllerV1 {
         }
         return postPage.map(post -> {
             var attachmentOptional = attachmentService.getFirstByPostId(post.getId());
-            var secondhandPost = secondhandPostService.getByPostId(post.getId()).orElseThrow(() -> new BusinessException("二手交易不存在"));
+            var secondhandPost = secondhandPostService.getByPostId(post.getId()).orElseThrow(() -> new NotExistsException("帖子不存在"));
             var topics = topicService.getTopicsByPostId(post.getId());
             return new SecondhandPostListVO(post, attachmentOptional.map(attachment -> imageUtil.getFullPath(attachment.getPath())).orElse(null), topics, secondhandPost.getTradeCategory(), secondhandPost.getCampus());
         });
@@ -95,11 +95,10 @@ public class SecondhandPostControllerV1 {
 
     @GetMapping("{postId}")
     public SecondhandPostVO getSecondhandPostDetail(@NotNull @PathVariable Long postId, @CurrentUser CurrentUserData currentUserData) {
-        var postOptional = postService.getById(postId);
-        var post = postOptional.orElseThrow(() -> new BusinessException("帖子不存在"));
+        var post = postService.getById(postId);
         var attachments = attachmentService.getByPostId(post.getId());
         var topics = topicService.getTopicsByPostId(post.getId());
-        var secondhandPost = secondhandPostService.getByPostId(post.getId()).orElseThrow(() -> new BusinessException("帖子不存在"));
+        var secondhandPost = secondhandPostService.getByPostId(post.getId()).orElseThrow(() -> new NotExistsException("帖子不存在"));
         var collected = postCollectionService.hasCollected(currentUserData.getUserId(), postId);
         var secondhandPostVO = new SecondhandPostVO(post, attachments.stream().map(attachment -> imageUtil.getFullPath(attachment.getPath())).collect(Collectors.toList()), topics, collected, currentUserData, secondhandPost.getTradeCategory(), secondhandPost.getCampus());
         secondhandPostVO.setAttitudeStatus(attitudeService.getAttitudeStatus(currentUserData.getUserId(), AttitudeTarget.POST, String.valueOf(postId)));

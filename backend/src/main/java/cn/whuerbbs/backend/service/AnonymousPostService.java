@@ -8,5 +8,5 @@ import java.util.Optional;
 public interface AnonymousPostService {
     void publish(String userId, AnonymousPostDTO anonymousPostDTO);
 
-    Optional<AnonymousPost> getByPostId(long id);
+    Optional<AnonymousPost> getByPostId(long postId);
 }

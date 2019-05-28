@@ -10,7 +10,7 @@ public interface UserService {
 
     Token wxLogin(WxLoginDTO wxLoginDTO);
 
-    Optional<User> getById(String userId);
+    User getById(String userId);
 
     void logout(String token);
 

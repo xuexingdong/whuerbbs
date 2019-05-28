@@ -2,6 +2,7 @@ package cn.whuerbbs.backend.service.impl;
 
 import cn.whuerbbs.backend.dto.WxLoginDTO;
 import cn.whuerbbs.backend.exception.BusinessException;
+import cn.whuerbbs.backend.exception.NotExistsException;
 import cn.whuerbbs.backend.mapper.UserMapper;
 import cn.whuerbbs.backend.mapper.UserWxMapper;
 import cn.whuerbbs.backend.model.Token;
@@ -79,8 +80,8 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public Optional<User> getById(String userId) {
-        return userMapper.selectById(userId);
+    public User getById(String userId) {
+        return userMapper.selectById(userId).orElseThrow(() -> new NotExistsException("用户不存在"));
     }
 
     @Override

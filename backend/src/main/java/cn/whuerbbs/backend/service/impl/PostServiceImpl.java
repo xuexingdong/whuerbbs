@@ -3,6 +3,7 @@ package cn.whuerbbs.backend.service.impl;
 import cn.whuerbbs.backend.dto.PostDTO;
 import cn.whuerbbs.backend.enumeration.Board;
 import cn.whuerbbs.backend.exception.BusinessException;
+import cn.whuerbbs.backend.exception.NotExistsException;
 import cn.whuerbbs.backend.mapper.*;
 import cn.whuerbbs.backend.model.Post;
 import cn.whuerbbs.backend.model.PostAttachment;
@@ -102,8 +103,8 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
-    public Optional<Post> getById(long postId) {
-        return postMapper.selectById(postId);
+    public Post getById(long postId) {
+        return postMapper.selectById(postId).orElseThrow(() -> new NotExistsException("帖子不存在"));
     }
 
     @Override
@@ -144,7 +145,7 @@ public class PostServiceImpl implements PostService {
     public Post addAnonymousInfo(Post post) {
         var user = new User();
         var anonymousPostOptional = anonymousPostMapper.selectByPostId(post.getId());
-        var anonymousPost = anonymousPostOptional.orElseThrow(() -> new BusinessException("帖子不存在"));
+        var anonymousPost = anonymousPostOptional.orElseThrow(() -> new NotExistsException("帖子不存在"));
         user.setAvatarUrl(imageUtil.getFullPath(defaultAnonymousAvatarPath));
         user.setNickname(anonymousPost.getAnonymousName());
         post.setUser(user);
