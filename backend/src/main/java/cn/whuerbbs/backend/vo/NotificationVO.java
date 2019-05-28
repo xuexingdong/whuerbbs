@@ -17,11 +17,10 @@ public class NotificationVO {
     private UserVO fromUser;
     private LocalDateTime createdAt;
 
-    public NotificationVO(Notification notification, Board board, String summary) {
+    public NotificationVO(Notification notification, Board board) {
         BeanUtils.copyProperties(notification, this);
         this.id = notification.getId();
         this.board = board;
-        this.summary = summary;
         this.fromUser = new UserVO(notification.getFromUser());
     }
 

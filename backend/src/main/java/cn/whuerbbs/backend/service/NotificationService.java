@@ -2,7 +2,6 @@ package cn.whuerbbs.backend.service;
 
 import cn.whuerbbs.backend.enumeration.Board;
 import cn.whuerbbs.backend.model.Notification;
-import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -11,5 +10,5 @@ public interface NotificationService {
 
     long countUnreadByUserId(String userId);
 
-    Pair<Board, String> getBoardAndSummary(Notification notification);
+    Board getBoard(Notification notification);
 }

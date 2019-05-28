@@ -90,6 +90,7 @@ CREATE TABLE `notification`
     `id`           int UNSIGNED NOT NULL AUTO_INCREMENT,
     `type`         smallint     NOT NULL,
     `reference_id` varchar(255) NOT NULL,
+    `summary`      varchar(255) NOT NULL,
     `content`      varchar(255) NOT NULL,
     `be_read`      tinyint(1)   NOT NULL default 0,
     `from_user_id` char(32)     NOT NULL,

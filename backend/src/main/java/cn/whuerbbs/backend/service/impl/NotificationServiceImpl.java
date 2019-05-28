@@ -1,6 +1,5 @@
 package cn.whuerbbs.backend.service.impl;
 
-import cn.whuerbbs.backend.common.Constants;
 import cn.whuerbbs.backend.enumeration.Board;
 import cn.whuerbbs.backend.mapper.CommentMapper;
 import cn.whuerbbs.backend.mapper.NotificationMapper;
@@ -9,7 +8,6 @@ import cn.whuerbbs.backend.model.Notification;
 import cn.whuerbbs.backend.service.NotificationService;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
-import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -46,8 +44,7 @@ public class NotificationServiceImpl implements NotificationService {
     }
 
     @Override
-    public Pair<Board, String> getBoardAndSummary(Notification notification) {
-        String summary = null;
+    public Board getBoard(Notification notification) {
         Board board = null;
         switch (notification.getType()) {
             case POST_COMMENTED:
@@ -56,7 +53,6 @@ public class NotificationServiceImpl implements NotificationService {
                 if (postOptional.isPresent()) {
                     String title = postOptional.get().getTitle();
                     board = postOptional.get().getBoard();
-                    summary = title.substring(0, Math.min(Constants.NOTIFICATION_SUMMARY_LENGTH, title.length()));
                 }
                 break;
             case COMMENT_LIKED:
@@ -69,12 +65,11 @@ public class NotificationServiceImpl implements NotificationService {
                     if (postOptional2.isPresent()) {
                         board = postOptional2.get().getBoard();
                     }
-                    summary = commentOptional.get().getContent().substring(0, Math.min(Constants.NOTIFICATION_SUMMARY_LENGTH, commentOptional.get().getContent().length()));
                 }
                 break;
             default:
-                summary = "";
+                break;
         }
-        return Pair.of(board, summary);
+        return board;
     }
 }

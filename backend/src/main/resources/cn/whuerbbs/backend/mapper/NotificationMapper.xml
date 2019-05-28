@@ -14,6 +14,7 @@
     <select id="selectByToUserIdPageable" resultMap="notificationResult">
         select n.id nid,
                n.type,
+               n.summary,
                n.content,
                n.reference_id,
                n.from_user_id,

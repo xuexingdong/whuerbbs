@@ -1,5 +1,6 @@
 package cn.whuerbbs.backend.service.impl;
 
+import cn.whuerbbs.backend.common.Constants;
 import cn.whuerbbs.backend.dto.CommentDTO;
 import cn.whuerbbs.backend.enumeration.NotificationType;
 import cn.whuerbbs.backend.exception.BusinessException;
@@ -46,6 +47,7 @@ public class CommentServiceImpl implements CommentService {
     @Override
     public void commentPost(String userId, CommentDTO commentDTO) {
         NotificationType notificationType;
+        String summary;
         String toUserId;
         String referenceId;
         Post post;
@@ -54,6 +56,7 @@ public class CommentServiceImpl implements CommentService {
             var postOptional = postMapper.selectById(commentDTO.getPostId());
             post = postOptional.orElseThrow(() -> new BusinessException("帖子不存在"));
             notificationType = NotificationType.POST_COMMENTED;
+            summary = post.getTitle().substring(0, Math.min(Constants.NOTIFICATION_SUMMARY_LENGTH, post.getTitle().length()));
             referenceId = String.valueOf(post.getId());
             toUserId = post.getUserId();
         }
@@ -63,6 +66,7 @@ public class CommentServiceImpl implements CommentService {
             var parentComment = parentCommentOptional.orElseThrow(() -> new BusinessException("父评论不存在"));
             commentDTO.setPostId(parentComment.getPostId());
             notificationType = NotificationType.COMMENT_REPLIED;
+            summary = parentComment.getContent().substring(0, Math.min(Constants.NOTIFICATION_SUMMARY_LENGTH, parentComment.getContent().length()));
             // 帖子被回复时，返回一级评论id
             referenceId = String.valueOf(commentDTO.getParentId());
             toUserId = parentComment.getUserId();
@@ -87,6 +91,7 @@ public class CommentServiceImpl implements CommentService {
         if (!userId.equals(toUserId)) {
             var notification = new Notification();
             notification.setType(notificationType);
+            notification.setSummary(summary);
             notification.setContent(comment.getContent());
             notification.setReferenceId(referenceId);
             notification.setFromUserId(userId);

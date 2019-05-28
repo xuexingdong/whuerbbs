@@ -7,6 +7,7 @@ import cn.whuerbbs.backend.model.base.Identifiable;
 public class Notification extends BaseModel implements Identifiable<Long> {
     private Long id;
     private NotificationType type;
+    private String summary;
     private String content;
     // read是SQL关键字
     private boolean beRead;
@@ -33,6 +34,14 @@ public class Notification extends BaseModel implements Identifiable<Long> {
 
     public void setType(NotificationType type) {
         this.type = type;
+    }
+
+    public String getSummary() {
+        return summary;
+    }
+
+    public void setSummary(String summary) {
+        this.summary = summary;
     }
 
     public String getContent() {

@@ -1,5 +1,6 @@
 package cn.whuerbbs.backend.service.impl;
 
+import cn.whuerbbs.backend.common.Constants;
 import cn.whuerbbs.backend.enumeration.AttitudeStatus;
 import cn.whuerbbs.backend.enumeration.AttitudeTarget;
 import cn.whuerbbs.backend.enumeration.NotificationType;
@@ -52,14 +53,16 @@ public class AttitudeServiceImpl implements AttitudeService {
         postMapper.updateLastActiveTime(Long.parseLong(attitude.getTargetId()), LocalDateTime.now());
 
         var notification = new Notification();
+        String summary;
         switch (target) {
             case POST:
                 postMapper.updateLikeCount(Long.parseLong(attitude.getTargetId()), 1);
                 notification.setType(NotificationType.POST_LIKED);
                 var postOptional = postMapper.selectById(Integer.parseInt(targetId));
                 var post = postOptional.orElseThrow(() -> new BusinessException("帖子不存在"));
-                notification.setToUserId(post.getUserId());
+                summary = post.getTitle().substring(0, Math.min(Constants.NOTIFICATION_SUMMARY_LENGTH, post.getTitle().length()));
                 notification.setReferenceId(String.valueOf(post.getId()));
+                notification.setToUserId(post.getUserId());
                 break;
             case COMMENT:
                 commentMapper.updateLikeCount(Long.parseLong(attitude.getTargetId()), 1);
@@ -68,10 +71,14 @@ public class AttitudeServiceImpl implements AttitudeService {
                 // 一级评论
                 if (comment.getParentId() == 0) {
                     notification.setType(NotificationType.COMMENT_LIKED);
+                    summary = comment.getContent().substring(0, Math.min(Constants.NOTIFICATION_SUMMARY_LENGTH, comment.getContent().length()));
                 }
                 // 二级评论
                 else {
                     notification.setType(NotificationType.SUB_COMMENT_LIKED);
+                    var parentCommentOptional = commentMapper.selectById(comment.getParentId());
+                    var parentComment = parentCommentOptional.orElseThrow(() -> new BusinessException("父评论不存在"));
+                    summary = parentComment.getContent().substring(0, Math.min(Constants.NOTIFICATION_SUMMARY_LENGTH, parentComment.getContent().length()));
                 }
                 notification.setReferenceId(String.valueOf(comment.getId()));
                 notification.setToUserId(comment.getUserId());
@@ -81,6 +88,7 @@ public class AttitudeServiceImpl implements AttitudeService {
         }
         // 发送通知和接收通知的不是同一个人
         if (!userId.equals(notification.getToUserId())) {
+            notification.setSummary(summary);
             notification.setContent("");
             notification.setFromUserId(userId);
             notification.setBeRead(false);
