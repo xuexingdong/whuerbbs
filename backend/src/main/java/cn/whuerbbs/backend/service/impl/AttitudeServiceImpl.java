@@ -68,16 +68,17 @@ public class AttitudeServiceImpl implements AttitudeService {
                 commentMapper.updateLikeCount(Long.parseLong(attitude.getTargetId()), 1);
                 var commentOptional = commentMapper.selectById(Integer.parseInt(targetId));
                 var comment = commentOptional.orElseThrow(() -> new BusinessException("评论不存在"));
-                // 一级评论
+                // 一级评论被点赞，跳转到帖子详情页
                 if (comment.getParentId() == 0) {
                     notification.setType(NotificationType.COMMENT_LIKED);
+                    notification.setReferenceId(String.valueOf(comment.getPostId()));
                 }
-                // 二级评论
+                // 二级评论被点赞，跳转到一级评论详情页
                 else {
                     notification.setType(NotificationType.SUB_COMMENT_LIKED);
+                    notification.setReferenceId(String.valueOf(comment.getParentId()));
                 }
                 summary = comment.getContent().substring(0, Math.min(Constants.NOTIFICATION_SUMMARY_LENGTH, comment.getContent().length()));
-                notification.setReferenceId(String.valueOf(comment.getPostId()));
                 notification.setToUserId(comment.getUserId());
                 break;
             default:
