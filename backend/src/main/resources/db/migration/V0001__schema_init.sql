@@ -53,8 +53,8 @@ CREATE TABLE `post_attachment`
     `post_id`       int UNSIGNED NOT NULL,
     `attachment_id` char(32)     NOT NULL,
     PRIMARY KEY (`id`),
-    KEY (`post_id`) USING HASH,
-    KEY (`attachment_id`) USING HASH
+    KEY (`post_id`),
+    KEY (`attachment_id`)
 );
 
 CREATE TABLE `comment`
@@ -68,8 +68,8 @@ CREATE TABLE `comment`
     `created_at` datetime     NOT NULL,
     `deleted`    int UNSIGNED NOT NULL DEFAULT 0,
     PRIMARY KEY (`id`),
-    KEY (`post_id`) USING HASH,
-    KEY (`user_id`) USING HASH
+    KEY (`post_id`),
+    KEY (`user_id`)
 );
 
 CREATE TABLE `attitude`
@@ -82,7 +82,7 @@ CREATE TABLE `attitude`
     `created_at` datetime     NOT NULL,
     `deleted`    int UNSIGNED NOT NULL DEFAULT 0,
     PRIMARY KEY (`id`),
-    UNIQUE KEY (`target`, `target_id`, `user_id`, `deleted`) USING HASH
+    UNIQUE KEY (`target`, `target_id`, `user_id`, `deleted`)
 );
 
 CREATE TABLE `notification`
@@ -98,8 +98,8 @@ CREATE TABLE `notification`
     `created_at`   datetime     NOT NULL,
     `deleted`      int UNSIGNED NOT NULL DEFAULT 0,
     PRIMARY KEY (`id`),
-    KEY (`to_user_id`) USING HASH,
-    KEY (`reference_id`) USING HASH
+    KEY (`to_user_id`),
+    KEY (`reference_id`)
 );
 
 CREATE TABLE `user_wx`
@@ -110,7 +110,7 @@ CREATE TABLE `user_wx`
     `created_at` datetime     NOT NULL,
     `deleted`    int UNSIGNED NOT NULL DEFAULT 0,
     PRIMARY KEY (`id`),
-    UNIQUE (`openid`, `user_id`) USING HASH
+    UNIQUE (`openid`, `user_id`)
 );
 
 CREATE TABLE `secondhand_post`
