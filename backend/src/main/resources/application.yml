@@ -12,6 +12,3 @@ mybatis:
   type-handlers-package: cn.whuerbbs.backend.mapper.typehandler
   configuration:
     map-underscore-to-camel-case: true
-
-server:
-  port: 8081

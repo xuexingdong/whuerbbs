@@ -3,7 +3,9 @@ spring:
     url: jdbc:mysql://localhost/whuerbbs?useSSL=false&useUnicode=true&characterEncoding=utf8&autoReconnect=true
     username: root
     password: 123456
-
+  servlet:
+    multipart:
+      max-file-size: 1KB
 wx:
   appid: wx048f99578329a543
   appsecret: 6032afa9de1c1f188f5143fb61c1ece9
@@ -11,13 +13,13 @@ wx:
 jwt:
   secret-key: 0Q20PjZkaJ1SHin0Yu6DULS8fNHJkWXlJa6LNtPSA9paxRVLWB7Xfnlptm5tgxUS
   expiration: 1d
-
 filepath: data
 
 logging:
   level:
     cn:
       whuerbbs: DEBUG
+  file: ./log.txt
 
 host: localhost
 
