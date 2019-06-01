@@ -54,7 +54,7 @@ public class UserControllerV1 {
 
     @GetMapping("/users/{userId}")
     public UserDetailVO getUserProfile(@NotNull @PathVariable String userId, @CurrentUser CurrentUserData currentUserData) {
-        var user = userService.getById(currentUserData.getUserId());
+        var user = userService.getById(userId);
         return new UserDetailVO(user);
     }
 }
