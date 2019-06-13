@@ -16,6 +16,6 @@ public class ImageUtil {
         if (Objects.isNull(path)) {
             return null;
         }
-        return "http://" + Paths.get(serverAddress, path).toString();
+        return "https://" + Paths.get(serverAddress, path).toString();
     }
 }
