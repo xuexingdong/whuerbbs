@@ -1,5 +1,6 @@
 springBoot {
     mainClassName = 'cn.whuerbbs.backend.BackendApplication'
+    archivesBaseName = 'whuerbbs-backend'
 }
 
 dependencies {
