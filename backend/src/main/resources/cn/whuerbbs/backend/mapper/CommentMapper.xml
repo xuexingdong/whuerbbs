@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.whuerbbs.backend.mapper.CommentMapper">
+    <resultMap id="commentResult" type="Comment" autoMapping="true">
+        <id property="id" column="cid"/>
+        <association property="user" javaType="User" autoMapping="true"/>
+    </resultMap>
+    <insert id="insert" keyProperty="id" useGeneratedKeys="true">
+        insert into comment (content, parent_id, post_id, user_id, created_at)
+        values (#{content}, #{parentId}, #{postId}, #{userId}, #{createdAt})
+    </insert>
+    <update id="updateLikeCount">
+        update comment
+        set like_count = like_count + #{likeCount}
+        where id = #{id}
+          and deleted = 0
+    </update>
+    <update id="deleteById">
+        update comment
+        set deleted = unix_timestamp()
+        where id = #{id}
+          and deleted = 0
+    </update>
+    <update id="deleteByParentId">
+        update comment
+        set deleted=unix_timestamp()
+        where parent_id = #{parentCommentId}
+          and deleted = 0
+    </update>
+    <update id="deleteByPostId">
+        update comment
+        set deleted = unix_timestamp()
+        where post_id = #{postId}
+          and deleted = 0
+    </update>
+    <select id="selectByPostIdPageable" resultMap="commentResult">
+        select c.id cid,
+               c.content,
+               c.like_count,
+               c.parent_id,
+               c.post_id,
+               c.user_id,
+               c.created_at,
+               u.id,
+               u.nickname,
+               u.avatar_url,
+               u.gender
+        from comment c
+                 join user u on c.user_id = u.id
+        where c.post_id = #{postId}
+          and parent_id = 0
+          and c.deleted = 0
+        order by c.created_at desc
+    </select>
+    <select id="countByPostId" resultType="long">
+        select count(1)
+        from comment
+        where post_id = #{postId}
+          and deleted = 0
+    </select>
+    <select id="selectById" resultMap="commentResult">
+        select c.id cid,
+               c.content,
+               c.like_count,
+               c.parent_id,
+               c.post_id,
+               c.user_id,
+               c.created_at,
+               u.id,
+               u.nickname,
+               u.avatar_url,
+               u.gender
+        from comment c
+                 join user u on c.user_id = u.id
+        where c.id = #{id}
+          and c.deleted = 0
+    </select>
+    <select id="selectHotComments" resultMap="commentResult">
+        select c.id cid,
+               c.content,
+               c.like_count,
+               c.parent_id,
+               c.post_id,
+               c.user_id,
+               c.created_at,
+               c2.sub_comment_count,
+               u.id,
+               u.nickname,
+               u.avatar_url,
+               u.gender
+        from comment c
+                 join (select parent_id,
+                              count(parent_id) as sub_comment_count
+                       from comment
+                       where post_id = #{postId}
+                         and parent_id != 0
+                         and deleted = 0
+                       group by parent_id
+        ) c2 on c.id = c2.parent_id
+                 join user u on c.user_id = u.id
+        where c.like_count + 3 * c2.sub_comment_count > 10
+        order by (c.like_count + 3 * c2.sub_comment_count) desc, c.created_at desc
+        limit #{n}
+    </select>
+    <select id="selectByParentId" resultMap="commentResult">
+        select c.id cid,
+               c.content,
+               c.like_count,
+               c.parent_id,
+               c.post_id,
+               c.user_id,
+               c.created_at,
+               u.id,
+               u.nickname,
+               u.avatar_url,
+               u.gender
+        from comment c
+                 join user u on c.user_id = u.id
+        where c.parent_id = #{parentCommentId}
+          and c.deleted = 0
+        order by c.like_count desc, c.created_at desc
+    </select>
+</mapper>

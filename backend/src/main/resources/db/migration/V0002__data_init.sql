@@ -1,0 +1,97 @@
+insert into attachment (id, name, path, created_at)
+values ('1', 'zonghe.jpg', '/data/topic/ershouqu/zonghe.jpg', now()),
+       ('2', 'shumajiadian.jpg', '/data/topic/ershouqu/shumajiadian.jpg', now()),
+       ('3', 'yiwuxiexue.jpg', '/data/topic/ershouqu/yiwuxiexue.jpg', now()),
+       ('4', 'shukanziliao.jpg', '/data/topic/ershouqu/shukanziliao.jpg', now()),
+       ('5', 'shenghuoyongpin.jpg', '/data/topic/ershouqu/shenghuoyongpin.jpg', now()),
+       ('6', 'meirongmeizhuang.jpg', '/data/topic/ershouqu/meirongmeizhuang.jpg', now()),
+
+       ('7', 'quanxiaoqu.jpg', '/data/topic/ershouqu/quanxiaoqu.jpg', now()),
+       ('8', 'xianshang.jpg', '/data/topic/ershouqu/xianshang.jpg', now()),
+       ('9', 'xinxixuebu.jpg', '/data/topic/ershouqu/xinxixuebu.jpg', now()),
+       ('10', 'gongxuebu.jpg', '/data/topic/ershouqu/gongxuebu.jpg', now()),
+       ('11', 'yixuebu.jpg', '/data/topic/ershouqu/yixuebu.jpg', now()),
+       ('12', 'wenlixuebu.jpg', '/data/topic/ershouqu/wenlixuebu.jpg', now()),
+
+       ('13', 'kechengkaoshi.jpg', '/data/topic/wendianshi/kechengkaoshi.jpg', now()),
+       ('14', 'shiwuzhaoling.jpg', '/data/topic/wendianshi/shiwuzhaoling.jpg', now()),
+       ('15', 'shenghuo.jpg', '/data/topic/wendianshi/shenghuo.jpg', now()),
+       ('16', 'zufang.jpg', '/data/topic/wendianshi/zufang.jpg', now()),
+       ('17', 'xueshu.jpg', '/data/topic/wendianshi/xueshu.jpg', now()),
+       ('18', 'shixiqiuzhi.jpg', '/data/topic/wendianshi/shixiqiuzhi.jpg', now()),
+       ('19', 'kaoyanbaoyan.jpg', '/data/topic/wendianshi/kaoyanbaoyan.jpg', now()),
+       ('20', 'chuguoliuxue.jpg', '/data/topic/wendianshi/chuguoliuxue.jpg', now()),
+
+       ('21', 'yuegefan.jpg', '/data/topic/yiqiwan/yuegefan.jpg', now()),
+       ('22', 'chulaiwan.jpg', '/data/topic/yiqiwan/chulaiwan.jpg', now()),
+       ('23', 'kandianying.jpg', '/data/topic/yiqiwan/kandianying.jpg', now()),
+       ('24', 'yuezixi.jpg', '/data/topic/yiqiwan/yuezixi.jpg', now()),
+       ('25', 'pinchema.jpg', '/data/topic/yiqiwan/pinchema.jpg', now()),
+       ('26', 'quyundong.jpg', '/data/topic/yiqiwan/quyundong.jpg', now()),
+
+       ('27', 'xuexiaodaxiaoshi.jpg', '/data/topic/xinxianshi/xuexiaodaxiaoshi.jpg', now()),
+       ('28', 'shehuixinwenyan.jpg', '/data/topic/xinxianshi/shehuixinwenyan.jpg', now()),
+       ('29', 'xiaoyuansuishoupai.jpg', '/data/topic/xinxianshi/xiaoyuansuishoupai.jpg', now()),
+       ('30', 'zaijianluojiashan.jpg', '/data/topic/xinxianshi/zaijianluojiashan.jpg', now()),
+       ('31', 'guanyuwobama.jpg', '/data/topic/xinxianshi/guanyuwobama.jpg', now()),
+       ('32', 'meishijisandi.jpg', '/data/topic/xinxianshi/meishijisandi.jpg', now()),
+       ('33', 'woyougepengyou.jpg', '/data/topic/xinxianshi/woyougepengyou.jpg', now()),
+
+       ('34', 'youshishimiandeyewan.jpg', '/data/topic/nimingqiang/youshishimiandeyewan.jpg', now()),
+       ('35', 'shuoshuowoshiyou.jpg', '/data/topic/nimingqiang/shuoshuowoshiyou.jpg', now()),
+       ('36', 'wudabiaobaiqiang.jpg', '/data/topic/nimingqiang/wudabiaobaiqiang.jpg', now()),
+       ('37', 'sanhangqingshi.jpg', '/data/topic/nimingqiang/sanhangqingshi.jpg', now()),
+       ('38', 'renbuliaoyaotucao.jpg', '/data/topic/nimingqiang/renbuliaoyaotucao.jpg', now()),
+       ('39', 'jintianbuxiangjiayoule.jpg', '/data/topic/nimingqiang/jintianbuxiangjiayoule.jpg', now()),
+       ('40', 'jintianyeyaojiayouya.jpg', '/data/topic/nimingqiang/jintianyeyaojiayouya.jpg', now())
+;
+
+
+insert into topic (board, title, description, attachment_id, participate_user_count, discussion_mount, active,
+                   created_at)
+values (2, '综合', '听说把帖子发到这个话题的人都很懒。', '1', 0, 0, 1, now()),
+       (2, '数码家电', '遇到价格诱人且形迹可疑的人要保持警惕哦～', '2', 0, 0, 1, now()),
+       (2, '衣物鞋靴', '让好看的衣服找到更合适的人', '3', 0, 0, 1, now()),
+       (2, '书刊资料', '让有（没）价（读）值（完）的信息继续传递', '4', 0, 0, 1, now()),
+       (2, '生活用品', '这里是一些\n小而美的生活好物', '5', 0, 0, 1, now()),
+       (2, '美容美妆', 'oh my god\n买它，买它，买它', '6', 0, 0, 1, now()),
+
+       (2, '全校区', '只要我想\n翻越绝望坡去见你\n否则，你过来也成', '7', 0, 0, 1, now()),
+       (2, '线上', '长路漫漫，快递可好？', '8', 0, 0, 1, now()),
+       (2, '信息学部', '交易完\n顺便一起去吃二食堂吧！', '9', 0, 0, 1, now()),
+       (2, '工学部', '听说工学部男孩子们的交易最痛快。', '10', 0, 0, 1, now()),
+       (2, '医学部', '好惨，很多人都没看过这个话题。', '11', 0, 0, 1, now()),
+       (2, '文理学部', '不如就在\n爱因斯坦西兰花雕像\n那里接头', '12', 0, 0, 1, now()),
+
+       (3, '课程考试', '选课排雷、课程作业\n点到情况、考试安排', '13', 0, 0, 1, now()),
+       (3, '失物招领', 'lost and found', '14', 0, 0, 1, now()),
+       (3, '生活', '求问万能论坛\n有人知道上哪领对象吗', '15', 0, 0, 1, now()),
+       (3, '租房', '老斋舍一室一厅出租\n建于1937\n绿化充足 可看人海', '16', 0, 0, 1, now()),
+       (3, '学术', '路漫漫其修远兮\n吾为paper而求索', '17', 0, 0, 1, now()),
+       (3, '实习求职', '简历、面试经验\n能力提升、模拟群面', '18', 0, 0, 1, now()),
+       (3, '考研保研', '愿这个话题下的每一个小伙伴\n都进入想去的学校', '19', 0, 0, 1, now()),
+       (3, '出国留学', '雅思托福、留学中介\n经验分享、海外租房', '20', 0, 0, 1, now()),
+
+       (5, '约个饭', '美食不可辜负\n多个人吃更热闹～', '21', 0, 0, 1, now()),
+       (5, '出来玩', '年轻\n就要有说走就走的勇气', '22', 0, 0, 1, now()),
+       (5, '看电影', '喂？\n有人想和我一起玩吗', '23', 0, 0, 1, now()),
+       (5, '约自习', '需要一个\n同样插满flag的小伙伴\n互相监督', '24', 0, 0, 1, now()),
+       (5, '拼车吗', '火车站机场拼车有需要的吗？', '25', 0, 0, 1, now()),
+       (5, '去运动', '我运动我快乐\n一起运动 更快乐', '26', 0, 0, 1, now()),
+
+       (1, '学校大小事', '武大里的那些事儿\n友好讨论\n不信谣不传谣', '27', 0, 0, 1, now()),
+       (1, '社会新闻眼', '听说武大学子都是关心社会的好青年，\n友好发言的人运气都不会差～', '28', 0, 0, 1, now()),
+       (1, '校园随手拍', '他说你任何\n大江南北的风景\n不及三月盛开的珞樱', '29', 0, 0, 1, now()),
+       (1, '再见珞珈山', '永是珞珈少年郎\n流苏不及客愁长', '30', 0, 0, 1, now()),
+       (1, '关于我爸妈', '“妈我五一不回来了”\n“好的，不回来也行”', '31', 0, 0, 1, now()),
+       (1, '美食集散地', '公婆饼or糯米包油条\n冷锅鱼or铁板烧\ndbq我全都要', '32', 0, 0, 1, now()),
+       (1, '我有个朋友', '此话题采用无中生友法\n我有个朋友...你懂的', '33', 0, 0, 1, now()),
+
+       (4, '又是失眠的夜晚', '总有些故事\n熄灯后才能诉说', '34', 0, 0, 1, now()),
+       (4, '说说我室友', '室友知道你爱吃的东西\n也知道你暗恋的人\n快来聊聊你的室友吧', '35', 0, 0, 1, now()),
+       (4, '武大表白墙', '表白xx级xx院xxx\n宣你三年了\n除了你别人都知道', '36', 0, 0, 1, now()),
+       (4, '三行情诗', '今晚\n夜色真美\n风也温柔', '37', 0, 0, 1, now()),
+       (4, '忍不住了要吐槽', '咱也不知道\n咱也不敢问\n给大伙看看就完事了', '38', 0, 0, 1, now()),
+       (4, '今天不想加油了', '对不起\n今天\n真的有点累', '39', 0, 0, 1, now()),
+       (4, '今天也要加油鸭', '从未走过自己想走的路\n又怎能过上想过的生活', '40', 0, 0, 1, now())
+;

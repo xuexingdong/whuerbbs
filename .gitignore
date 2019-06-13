@@ -1,0 +1,8 @@
+.idea/
+.gradle/
+gradle/
+data/*.jpg
+build/
+out/
+.DS_Store
+application-prod.yml

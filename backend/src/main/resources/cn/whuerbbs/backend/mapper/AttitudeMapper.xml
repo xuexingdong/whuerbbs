@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.whuerbbs.backend.mapper.AttitudeMapper">
+    <insert id="insert">
+        insert ignore into attitude (target, target_id, status, user_id, created_at)
+        values (#{target}, #{targetId}, #{status}, #{userId}, #{createdAt})
+    </insert>
+    <delete id="delete">
+        update attitude
+        set deleted = unix_timestamp(now())
+        where target = #{target}
+          and target_id = #{targetId}
+          and user_id = #{userId}
+          and deleted = 0
+    </delete>
+    <select id="count" resultType="long">
+        select count(1)
+        from attitude
+        <where>
+            <if test="userId != null">
+                user_id = #{userId}
+            </if>
+            <if test="target != null">
+                and target = #{target}
+            </if>
+            <if test="targetId != null">
+                and target_id = #{targetId}
+            </if>
+            <if test="status != null">
+                and status = #{status}
+            </if>
+        </where>
+        and deleted = 0
+    </select>
+    <select id="select" resultType="Attitude">
+        select *
+        from attitude
+        <where>
+            <if test="userId != null">
+                user_id = #{userId}
+            </if>
+            <if test="target != null">
+                and target = #{target}
+            </if>
+            <if test="targetId != null">
+                and target_id = #{targetId}
+            </if>
+            <if test="status != null">
+                and status = #{status}
+            </if>
+        </where>
+        and deleted = 0
+    </select>
+</mapper>

@@ -1,0 +1,154 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.whuerbbs.backend.mapper.PostMapper">
+    <resultMap id="postResult" type="Post" autoMapping="true">
+        <id property="id" column="pid"/>
+        <association property="user" javaType="User" autoMapping="true"/>
+    </resultMap>
+
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id">
+        insert into post (title, content, board, user_id, created_at, last_active_at)
+        values (#{title}, #{content}, #{board}, #{userId}, #{createdAt}, #{lastActiveAt})
+    </insert>
+    <update id="updateLastActiveTime">
+        update post
+        set last_active_at = #{lastActiveAt}
+        where id = #{id}
+          and deleted = 0
+    </update>
+    <update id="updateLikeCount">
+        update post
+        set like_count = like_count + #{likeCount}
+        where id = #{id}
+          and deleted = 0
+    </update>
+    <update id="updateCommentCount">
+        update post
+        set comment_count = comment_count + #{commentCount}
+        where id = #{id}
+          and deleted = 0
+    </update>
+    <update id="deleteById">
+        update post
+        set deleted = unix_timestamp()
+        where id = #{id}
+          and deleted = 0
+    </update>
+    <select id="selectPageable" resultMap="postResult">
+        select p.id pid,
+        p.title,
+        p.content,
+        p.board,
+        p.like_count,
+        p.comment_count,
+        p.user_id,
+        p.created_at,
+        p.last_active_at,
+        u.id,
+        u.nickname,
+        u.avatar_url,
+        u.gender
+        from post p
+        join user u on p.user_id = u.id
+        <where>
+            <if test="title != null and title != ''">
+                p.title like #{title}
+            </if>
+            <if test="board != null">
+                and p.board = #{board}
+            </if>
+            and p.deleted = 0
+        </where>
+        order by p.last_active_at desc
+    </select>
+    <select id="selectById" resultMap="postResult">
+        select p.id pid,
+               p.title,
+               p.content,
+               p.board,
+               p.like_count,
+               p.comment_count,
+               p.user_id,
+               p.created_at,
+               p.last_active_at,
+               u.id,
+               u.nickname,
+               u.avatar_url,
+               u.gender
+        from (select *
+              from post
+              where id = #{id}
+                and deleted = 0) p
+                 join user u on p.user_id = u.id
+        order by p.last_active_at desc
+    </select>
+    <select id="selectByIds" resultMap="postResult">
+        select p.id pid,
+        p.title,
+        p.content,
+        p.board,
+        p.like_count,
+        p.comment_count,
+        p.user_id,
+        p.created_at,
+        p.last_active_at,
+        u.id,
+        u.nickname,
+        u.avatar_url,
+        u.gender
+        from (select *
+        from post
+        where id in
+        <foreach collection="list" item="item" separator="," open="(" close=")">
+            #{item}
+        </foreach>
+        and deleted = 0) p
+        join user u on p.user_id = u.id
+    </select>
+    <select id="selectPostsByTopicId" resultMap="postResult">
+        select p.id pid,
+               p.title,
+               p.content,
+               p.board,
+               p.like_count,
+               p.comment_count,
+               p.user_id,
+               p.created_at,
+               p.last_active_at,
+               u.id,
+               u.nickname,
+               u.avatar_url,
+               u.gender
+        from post p
+                 join post_topic pt
+                      on p.id = pt.post_id
+                 join user u on p.user_id = u.id
+        where pt.topic_id = #{topicId}
+          and p.deleted = 0
+        order by p.last_active_at desc
+    </select>
+    <select id="selectHotPostIdsByTopicId" resultMap="postResult">
+        select p.id pid,
+               p.title,
+               p.content,
+               p.board,
+               p.like_count,
+               p.comment_count,
+               p.user_id,
+               p.created_at,
+               p.last_active_at,
+               u.id,
+               u.nickname,
+               u.avatar_url,
+               u.gender
+        from post p
+                 join post_topic pt on p.id = pt.post_id
+                 join user u on p.user_id = u.id
+        where pt.topic_id = #{topicId}
+          and p.deleted = 0
+          and (p.like_count + p.comment_count * 3) > 50
+        order by p.like_count + p.comment_count * 3 desc
+    </select>
+</mapper>
